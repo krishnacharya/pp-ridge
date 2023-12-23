@@ -1,2 +1,2 @@
 # pp-ridge
-Personalized Privacy on Ridge
+Personalized Privacy for Regression
