@@ -2,7 +2,6 @@ from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import pandas as pd
 
-
 def weighted_rls_solution(weights:np.ndarray, X: np.ndarray, y:np.ndarray, lamb:float = 1.0) -> np.ndarray:
   """
     Inputs
@@ -44,7 +43,7 @@ def sample_l2lap(beta:float, d:int) -> np.array:
   """
   R = np.random.gamma(d, scale = 1.0/beta)
   Z = np.random.normal(0, 1, size = d)
-  return R * (Z / np.linalg.norm(Z))
+  return R * (Z / np.linalg.norm(Z)) #shape is (d,) one dimensional
 
 def compute_beta(lamb, tot_epsilon):
   '''
@@ -55,10 +54,13 @@ def compute_beta(lamb, tot_epsilon):
   '''
   return (lamb/2) * (lamb**0.5 / (1 + lamb**0.5)) * tot_epsilon
 
-def compute_private_estimator(minimizer, beta, d):
+def compute_private_estimator(minimizer:np.ndarray, beta:float) -> np.ndarray:
   '''
     Private estimate after adding L2 laplace noise, note beta is calculated using epsilon required by each agent
+    
+    minimizer: shape (d,1), minimizer of ridge regression
   '''
+  d = len(minimizer)
   return minimizer + sample_l2lap(beta, d).reshape(d, -1)
 
 def generate_linear_data(n:int, theta:np.array, sigma:float):
@@ -97,3 +99,20 @@ def numeric_scaler(df, cols):
     mmscaler = MinMaxScaler()
     df_new[cols] = mmscaler.fit_transform(df_new[cols])
     return df_new
+
+def dataset_mask_jorgensen(epsilons:np.ndarray, thresh:float) -> np.ndarray:
+    '''
+    randomized sampling of dataset using definition 9 from
+    Conservative or Liberal? Personalized Differential 
+    Privacy  https://wrap.warwick.ac.uk/67370/7/WRAP_Cormode_pdp.pdf
+
+    epsilons: privacy requirement of each agent, shape (n,)
+    thres: global threshold in defn 9
+
+    Returns:
+        binary array representing with 1 meaning pick that datapoint, 0 meaning don't pick
+    '''
+    p = np.clip((np.exp(epsilons) - 1) / (np.exp(thresh) - 1), None, 1.0) # shape (n,); bernoulli probabilities for each datapoint
+    select = (np.random.random(len(p)) < p).astype(np.uint32) # binary array shape (n,); 1 means select that datapoint
+    return select
+    # return X[select.astype(bool)]
