@@ -64,6 +64,7 @@ for n in N:
                 "jorg_unw_train_std": jorg_unw_train_std,
                 "jorg_w_test_mean": jorg_w_test_mean,
                 "jorg_w_test_std": jorg_w_test_std}
+            i += 1
             print(f"Expt {i} done, lambda {lamb}")
             list_of_results.append(di)
 
