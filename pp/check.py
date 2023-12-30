@@ -6,10 +6,10 @@ def run(file_name):
 
     df = pd.read_csv(file_name)
 
-    df1 = (df["jorg_unw_train_mean"] <= df["pp_unw_train_mean"])
-    df2 = (df["jorg_unw_train_std"] <= df["pp_unw_train_std"])
-    df3 = (df["jorg_w_test_mean"] <= df["pp_w_test_mean"])
-    df4 = (df["jorg_w_test_std"] <= df["pp_w_test_std"])
+    df1 = (df["jorg_train_mean"] <= df["pp_train_mean"])
+    df2 = (df["jorg_train_std"] <= df["pp_train_std"])
+    df3 = (df["jorg_test_mean"] <= df["pp_test_mean"])
+    df4 = (df["jorg_test_std"] <= df["pp_test_std"])
 
     print("df1: ", df1.value_counts())
     print("df2 : ", df2.value_counts())
