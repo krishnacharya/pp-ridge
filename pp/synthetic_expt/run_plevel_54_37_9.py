@@ -22,13 +22,12 @@ runs = 10000
 
 list_of_results = []
 i = 0
-for n in N:
-    for d in D:
-
-        theta = np.random.uniform(0, 1, size=d)
-        theta = normalize(theta.reshape(d, -1), axis=0, norm='l2')
-
-        theta = theta.reshape((d,))
+for d in D:
+    theta = np.random.uniform(0, 1, size=d)
+    theta = normalize(theta.reshape(d, -1), axis=0, norm='l2')
+    theta = theta.reshape((d,))
+    
+    for n in N:
 
         X, y = generate_linear_data(n = n, theta = theta, sigma=0)
         print("y = ", y)
