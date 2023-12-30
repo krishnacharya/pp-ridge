@@ -22,9 +22,9 @@ runs = 10000
 
 list_of_results = []
 i = 0
-for n in N:
-    for d in D:
-
+for d in D:
+    for n in N:
+        
         theta = np.random.uniform(0, 1, size=d)
         theta = normalize(theta.reshape(d, -1), axis=0, norm='l2')
 
