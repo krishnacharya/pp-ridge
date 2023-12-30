@@ -1,4 +1,6 @@
 from sklearn.preprocessing import MinMaxScaler
+import pandas as pd
+
 def one_hot(df, cols): # idk if sklearns one-hot encoder is similar
     """
     df: pandas DataFrame

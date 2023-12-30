@@ -6,7 +6,7 @@ from src.utils import weighted_rls_solution, compute_beta, compute_private_estim
 
 ## PP-ESTIMATOR
 
-def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_test):
+def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_test, runs):
   tot_epsilon = np.sum(epsilons)
   weights_pp = epsilons / tot_epsilon # weights used in the ridge regression for personalized privacy
 
@@ -15,7 +15,6 @@ def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_te
   beta_pp = compute_beta(lamb, tot_epsilon)
   # print("beta for pp", beta_pp)
   # Do runs, in each calculate loss on unweighted train, unweighted test set loss of the private estimator; 1000 runs for randomness in L2 laplce dp noise
-  runs = 100
   unweighted_train = []
   unweighted_test = []
   uniform_weight_train = np.ones(N_train) / N_train
@@ -33,11 +32,10 @@ def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_te
 
 # JORGENSEN PRIVATE ESTIMATOR
 
-def jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_test):
+def jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_test, runs):
 
   thresh = max(epsilons) #global threshold used in jorgensen sampling
   # to loop the part below
-  runs = 100
   uniform_weight_train = np.ones(N_train) / N_train
   uniform_weight_test = np.ones(N_test) / N_test
 
