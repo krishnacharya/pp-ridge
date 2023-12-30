@@ -57,14 +57,14 @@ for d in D:
             di = {"d": d,
                 "n": n,
                 "lamb": lamb,
-                "pp_unw_train_mean": pp_unw_train_mean,
-                "pp_unw_train_std": pp_unw_train_std,
-                "pp_w_test_mean": pp_w_test_mean,
-                "pp_w_test_std": pp_w_test_std,
-                "jorg_unw_train_mean": jorg_unw_train_mean,
-                "jorg_unw_train_std": jorg_unw_train_std,
-                "jorg_w_test_mean": jorg_w_test_mean,
-                "jorg_w_test_std": jorg_w_test_std}
+                "pp_train_mean": pp_unw_train_mean,
+                "pp_train_std": pp_unw_train_std,
+                "pp_test_mean": pp_w_test_mean,
+                "pp_test_std": pp_w_test_std,
+                "jorg_train_mean": jorg_unw_train_mean,
+                "jorg_train_std": jorg_unw_train_std,
+                "jorg_test_mean": jorg_w_test_mean,
+                "jorg_test_std": jorg_w_test_std}
             i += 1
             print(f"Expt {i} done, lambda {lamb}")
             list_of_results.append(di)
