@@ -21,7 +21,7 @@ runs = 10000
 # d = 10 # dimensionality
 
 list_of_results = []
-
+i = 0
 for n in N:
     for d in D:
 
@@ -30,8 +30,8 @@ for n in N:
 
         theta = theta.reshape((d,))
 
-        X, y = generate_linear_data(n = N, theta = theta, sigma=0)
-        assert np.linalg.norm(y) <= 1
+        X, y = generate_linear_data(n = n, theta = theta, sigma=0)
+        print("y = ", y)
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 21)
         # print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
@@ -64,7 +64,7 @@ for n in N:
                 "jorg_unw_train_std": jorg_unw_train_std,
                 "jorg_w_test_mean": jorg_w_test_mean,
                 "jorg_w_test_std": jorg_w_test_std}
-            
+            print(f"Expt {i} done, lambda {lamb}")
             list_of_results.append(di)
 
 df = pd.DataFrame(list_of_results)
