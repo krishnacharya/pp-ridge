@@ -48,6 +48,8 @@ for n in N:
         # from collections import Counter
         # print(Counter(epsilons))
 
+        print(f"n: {n}, d: {d}")
+
         for lamb in Lamb:
             
             pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_test)
