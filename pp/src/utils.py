@@ -1,4 +1,4 @@
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import normalize, MinMaxScaler
 import numpy as np
 import pandas as pd
 
@@ -74,7 +74,9 @@ def generate_linear_data(n:int, theta:np.array, sigma:float):
       y the associated labels shape is (n,)
   '''
   X = np.random.rand(n, len(theta))
+  X = normalize(X, axis=0, norm='l2')
   y = X @ theta + np.random.normal(0, sigma, size=n)
+  print(y.shape)
   return X, y
 
 def one_hot(df, cols): # idk if sklearns one-hot encoder is similar
