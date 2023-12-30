@@ -94,3 +94,26 @@ def dataset_mask_jorgensen(epsilons:np.ndarray, thresh:float) -> np.ndarray:
     select = (np.random.random(len(p)) < p).astype(np.uint32) # binary array shape (n,); 1 means select that datapoint
     return select
     # return X[select.astype(bool)]
+
+def epsilons_54_37_9(N_train : int) -> np.ndarray:
+  '''
+      3 privacy levels
+      values chosen from this paper : "Utility-aware Exponential Mechanism for Personalized Differential Privacy"
+  '''
+  epsilons = np.zeros(N_train)# training datas agents privacy levels, want 3 privacy levels
+  epsilons[:int(0.54*N_train)] = 0.1 # 54% care abt privacy (FUNDAMENTALISTS)
+  epsilons[int(0.54*N_train) : int(0.91 * N_train)] = 0.5 # 37% care little abt privacy (PRAGMATISTS)
+  epsilons[int(0.91 * N_train) : ] = 1.0 # 9% dont care (UNCONCERNED)
+  return epsilons
+
+def epsilons_34_43_23(N_train: int) -> np.ndarray:
+  '''
+      3 privacy levels
+      values chosen from this paper : "Heterogeneous differential privacy"
+  '''
+  epsilons = np.zeros(N_train)# training datas agents privacy levels, want 3 privacy levels
+  # values chosen from this paper : "Heterogeneous differential privacy"
+  epsilons[:int(0.34*N_train)] = 0.1 # 34% care abt privacy (FUNDAMENTALISTS)
+  epsilons[int(0.34*N_train) : int(0.77 * N_train)] = 0.5 # 43% care little abt privacy (PRAGMATISTS)
+  epsilons[int(0.77 * N_train) : ] = 1.0 # 23% dont care (UNCONCERNED)
+  return epsilons
