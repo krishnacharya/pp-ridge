@@ -74,7 +74,7 @@ def generate_linear_data(n:int, theta:np.array, sigma:float):
       y the associated labels shape is (n,)
   '''
   X = np.random.rand(n, len(theta))
-  X = normalize(X, axis=0, norm='l2')
+  X = normalize(X, norm='l2')
   print("X[:10,:]: ", X[:10,:])
   print("theta: ", theta)
   y = X @ theta + np.random.normal(0, sigma, size=n)
