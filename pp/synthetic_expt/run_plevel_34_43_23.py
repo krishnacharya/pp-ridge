@@ -45,15 +45,15 @@ for d in D:
         epsilons[int(0.34*N_train) : int(0.77 * N_train)] = 0.5 # 43% care little abt privacy (PRAGMATISTS)
         epsilons[int(0.77 * N_train) : ] = 1.0 # 23% dont care (UNCONCERNED
 
-        print(f"n: {n}, d: {d}")
+        print(f"d: {d}, n: {n}")
 
         for lamb in Lamb:
             
             pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_test, runs)
             jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_test, runs)
 
-            di = {"n": n,
-                "d": d,
+            di = {"d": d,
+                "n": n,
                 "lamb": lamb,
                 "pp_train_mean": pp_unw_train_mean,
                 "pp_train_std": pp_unw_train_std,
