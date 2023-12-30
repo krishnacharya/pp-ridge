@@ -1,4 +1,4 @@
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import normalize, MinMaxScaler
 import numpy as np
 import pandas as pd
 
@@ -74,7 +74,11 @@ def generate_linear_data(n:int, theta:np.array, sigma:float):
       y the associated labels shape is (n,)
   '''
   X = np.random.rand(n, len(theta))
+  X = normalize(X, norm='l2')
+  print("X[:10,:]: ", X[:10,:])
+  print("theta: ", theta)
   y = X @ theta + np.random.normal(0, sigma, size=n)
+  print(y.shape)
   return X, y
 
 def dataset_mask_jorgensen(epsilons:np.ndarray, thresh:float) -> np.ndarray:
