@@ -1,5 +1,8 @@
 import numpy as np
-from utils import weighted_rls_solution, compute_beta, compute_private_estimator, evaluate_weighted_rls_objective, dataset_mask_jorgensen
+import sys
+sys.path.append('../')
+
+from src.utils import weighted_rls_solution, compute_beta, compute_private_estimator, evaluate_weighted_rls_objective, dataset_mask_jorgensen
 
 ## PP-ESTIMATOR
 
