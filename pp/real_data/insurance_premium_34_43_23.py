@@ -43,7 +43,7 @@ for f in frac_of_train_dataset: # varying the number of trianing data points use
     else:
         X_tr_frac, _ , y_tr_frac, _ = train_test_split(X_train, y_train, train_size = f, random_state = seed)
     N_train_frac = len(X_tr_frac) 
-    epsilons = epsilons_54_37_9(N_train_frac)
+    epsilons = epsilons_34_43_23(N_train_frac)
     for lamb in Lamb:
         pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, N_train_frac, N_test, runs)
         jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, N_train_frac, N_test, runs)
@@ -62,7 +62,8 @@ for f in frac_of_train_dataset: # varying the number of trianing data points use
         list_of_results.append(di)
         i += 1
 df = pd.DataFrame(list_of_results)
-df.to_csv('../insurance_data_plevel_54_37_9.csv', encoding='utf-8', index=False)
+df.to_csv('../insurance_data_plevel_34_43_23.csv', encoding='utf-8', index=False)
+
 
 
 
