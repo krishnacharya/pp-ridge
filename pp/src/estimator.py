@@ -7,6 +7,10 @@ from src.utils import weighted_rls_solution, compute_beta, compute_private_estim
 ## PP-ESTIMATOR
 
 def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_test, runs):
+  '''
+    X_train: np.ndarray of shape (n, d)
+    epsilons: must be a numpy array of shape (len(X_train),)
+  '''
   tot_epsilon = np.sum(epsilons)
   weights_pp = epsilons / tot_epsilon # weights used in the ridge regression for personalized privacy
 
@@ -22,18 +26,19 @@ def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_te
   # weighted_erm = []
   for _ in range(runs):
     theta_hat_pp = compute_private_estimator(sol_exact_ridge_pp, beta_pp) # exact solution on weighted training + noise
-    unweighted_train.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_train, X_train, y_train, 0))
+    unweighted_train.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_train, X_train, y_train, 0)) # evaluate with lambda = 0, don't add regularizer for evaluation!
     unweighted_test.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_test, X_test, y_test, 0))
-    # weighted_erm.append(evaluate_weighted_rls_objective(theta_hat_pp, weights_pp, X, y, lamb))
-  # print("unweighted_train_usingour_pp", np.mean(unweighted_train), np.std(unweighted_train))
-  # print("unweighted_test_usingour_pp", np.mean(unweighted_test), np.std(unweighted_test))
-  # print("weighted_erm_using_privateestimator", np.mean(weighted_erm), np.std(weighted_erm))
   return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test)
 
 # JORGENSEN PRIVATE ESTIMATOR
 
 def jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_test, runs):
-
+  '''
+    X_train: np.ndarray of shape (n, d)
+    epsilons: must be a numpy array of shape (len(X_train),)
+    To ensure personalized privacy Jorgensen et.al first subsample from the training data acc personalized privacy levels
+    then add noise
+  '''
   thresh = max(epsilons) #global threshold used in jorgensen sampling
   # to loop the part below
   uniform_weight_train = np.ones(N_train) / N_train
@@ -48,13 +53,10 @@ def jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb
     N_samp = len(y_samp)
     unif_weight_samp = np.ones(N_samp) / N_samp
     tot_epsilon = thresh * N_samp # Use global threshold epsilon as privacy level for each sampled datapoint
-    # now do DP with global threshold thresh, on the sampled data, using our sensitivity calculations
+    # now do DP with global threshold thresh, on the sampled data, using our framewor/sensitivity calculations
     theta_bar = weighted_rls_solution(unif_weight_samp, X_samp, y_samp, lamb) # unweighted soln with sampled data
     beta = compute_beta(lamb, tot_epsilon)
     theta_hat = compute_private_estimator(theta_bar, beta)
     unweighted_train.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_train, X_train, y_train, 0))
     unweighted_test.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_test, X_test, y_test, 0))
-  # print("unweighted_erm_using_privateestimator", np.mean(unweighted_train), np.std(unweighted_train)) # WE care about low values here!
-  # print("weighted_erm_using_privateestimator", np.mean(unweighted_test), np.std(unweighted_test))
-
   return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test)
