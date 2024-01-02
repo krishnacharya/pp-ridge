@@ -32,7 +32,7 @@ for d in D:
 
         # Privacy Levels
         # epsilons = epsilons_34_43_23(N_train)
-        epsilons = set_epsilons(N_train, f_c=0.34, f_m=0.43, f_l=0.23, eps_c=0, eps_m=0.5, eps_l=1.0)
+        epsilons = set_epsilons(N_train, f_c=0.34, f_m=0.43, f_l=0.23, eps_c=0.01, eps_m=0.2, eps_l=1.0)
 
         print(f"d: {d}, n: {n}")
 
