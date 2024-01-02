@@ -24,7 +24,9 @@ df_medical_mm_oh = df_medical_mm_oh * 1.0 # make bool true, false into 1.0, 0.0
 # make X rows L2 norm 1, y is already in [0,1] from the above
 X = df_medical_mm_oh.drop('charges', axis=1).to_numpy()
 y = df_medical_mm_oh['charges'].to_numpy()
-X = normalize(X, norm='l2') # each row is L2 normalized
+dim = X.shape[1] # dimensionality of the feature
+X  = X / (dim**0.5)
+# X = normalize(X, norm='l2') # each row is L2 normalized
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state = seed)
 print("Training data x, y shapes", X_train.shape, y_train.shape)
@@ -62,7 +64,7 @@ for f in frac_of_train_dataset: # varying the number of trianing data points use
         list_of_results.append(di)
         i += 1
 df = pd.DataFrame(list_of_results)
-df.to_csv('../insurance_data_plevel_34_43_23.csv', encoding='utf-8', index=False)
+df.to_csv('../insurance_data_plevel_34_43_23_sqrtd.csv', encoding='utf-8', index=False)
 
 
 
