@@ -32,7 +32,7 @@ def evaluate_weighted_rls_objective(theta: np.ndarray, weights:np.ndarray, X: np
   weights = weights.reshape(n, -1) #now shape (n, 1)
   X_w = X * (weights**0.5) # shape (n, d)
   y_w = y.reshape(n, -1) * (weights**0.5) # shape (n, 1)
-  return np.sum((X_w @ theta - y_w)**2) + lamb * np.linalg.norm(theta)**2
+  return (np.sum((X_w @ theta - y_w)**2) + lamb * np.linalg.norm(theta)**2)**0.5
 
 def sample_l2lap(eta:float, d:int) -> np.array:
   """
@@ -55,7 +55,7 @@ def compute_eta(lamb:float, tot_epsilon:float, d:int, B_lambda = None):
       eta used for L2 laplace central noise
   ''' 
   if B_lambda is None: # Unless explicitly given a bound B just use 1/sqrt(lambda)
-    B_lambda = lamb**(-0.5)
+    B_lambda = min(lamb**(-0.5), d**0.5 / lamb)
   Dr = 2*(d*B_lambda + d**0.5) # denominator in eta expresion
   return lamb * tot_epsilon / Dr
 
@@ -79,10 +79,10 @@ def generate_linear_data(n:int, d:int, sigma:float):
       y the associated labels shape is (n,) 
   '''
   X = np.random.rand(n, d) # entries uniform in [0,1), thus each row ||x_i|| bounded by \sqrt{d}
-  theta = np.random.normal(0, 1, d) # d iid gaussian each entry N(0, 1)
+  theta = np.random.normal(0, 1, d) # d iid Gaussian each entry N(0, 1)
   theta = theta / np.linalg.norm(theta) # theta is uniformly distributed on the surface of unit sphere, shape (d,)
   y = (X @ theta) / d**0.5 + np.random.normal(0, sigma, size=n) # so essentially the learner is trying to recover \theta / d**0.5
-  return X, y
+  return X, y #return actual theta = theta/sqrt{d}, return that too
 
 def dataset_mask_jorgensen(epsilons:np.ndarray, thresh:float) -> np.ndarray:
     '''
@@ -95,6 +95,7 @@ def dataset_mask_jorgensen(epsilons:np.ndarray, thresh:float) -> np.ndarray:
 
     Returns:
         binary array representing with 1 meaning pick that datapoint, 0 meaning don't pick
+    TODO threshold_average
     '''
     p = np.clip((np.exp(epsilons) - 1) / (np.exp(thresh) - 1), None, 1.0) # shape (n,); bernoulli probabilities for each datapoint
     select = (np.random.random(len(p)) < p).astype(np.uint32) # binary array shape (n,); 1 means select that datapoint

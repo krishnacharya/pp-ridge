@@ -17,6 +17,7 @@ N = [10,50,100,200]
 D = [10,20,30,40]
 runs = 10000
 
+
 list_of_results = []
 i = 0
 for d in D:
@@ -36,6 +37,7 @@ for d in D:
         for lamb in Lamb:
             # pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_test, runs)
             # jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_test, runs)
+            lamb = lamb * d
             pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs)
             jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs)
 
@@ -56,4 +58,4 @@ for d in D:
 
 df = pd.DataFrame(list_of_results)
 
-df.to_csv('../plevel_34_43_23_result_new_sensitivity.csv', encoding='utf-8', index=False)
+df.to_csv('../plevel_34_43_23_result_lastsqrt.csv', encoding='utf-8', index=False)
