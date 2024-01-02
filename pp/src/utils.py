@@ -35,33 +35,39 @@ def evaluate_weighted_rls_objective(theta: np.ndarray, weights:np.ndarray, X: np
   y_w = y.reshape(n, -1) * (weights**0.5) # shape (n, 1)
   return np.sum((X_w @ theta - y_w)**2) + lamb * np.linalg.norm(theta)**2
 
-def sample_l2lap(beta:float, d:int) -> np.array:
+def sample_l2lap(eta:float, d:int) -> np.array:
   """
     Returns
       d dimensional noise sampled from `L2 laplace'
       https://math.stackexchange.com/questions/3801271/sampling-from-a-exponentiated-multivariate-distribution-with-l2-norm
   """
-  R = np.random.gamma(d, scale = 1.0/beta)
+  R = np.random.gamma(d, scale = 1.0/eta)
   Z = np.random.normal(0, 1, size = d)
   return R * (Z / np.linalg.norm(Z)) #shape is (d,) one dimensional
 
-def compute_beta(lamb, tot_epsilon):
+def compute_eta(lamb:float, tot_epsilon:float, d:int, B_lambda = None):
   '''
     lamb: regularization parameter for ridge
-    tot_epsilon: sum of all the agents privacy requirements \sum_i \varepsilon_i]
-    Returns
-      beta used for L2 laplace central noise
-  '''
-  return (lamb/2) * (lamb**0.5 / (1 + lamb**0.5)) * tot_epsilon
+    tot_epsilon: sum of all the agents privacy requirements \sum_i epsilon_i
+    d: dimensionality of the data, i.e.,  x_i lies in [0,1]^d
+    B_lambda: upper bound for norm of thetabar 
 
-def compute_private_estimator(minimizer:np.ndarray, beta:float) -> np.ndarray:
+    Returns
+      eta used for L2 laplace central noise
+  ''' 
+  if B_lambda is None: # Unless explicitly given a bound B just use 1/sqrt(lambda)
+    B_lambda = lamb**(-0.5)
+  Dr = 2*(d*B_lambda + d**0.5) # denominator in eta expresion
+  return lamb * tot_epsilon / Dr
+
+def compute_private_estimator(minimizer:np.ndarray, eta:float) -> np.ndarray:
   '''
-    Private estimate after adding L2 laplace noise, note beta is calculated using epsilon required by each agent
-    
+    Private estimate after adding L2 laplace noise, 
+    note eta is calculated using epsilon required by each agent
     minimizer: shape (d,1), minimizer of ridge regression
   '''
   d = len(minimizer)
-  return minimizer + sample_l2lap(beta, d).reshape(d, -1)
+  return minimizer + sample_l2lap(eta, d).reshape(d, -1)
 
 def generate_linear_data(n:int, theta:np.array, sigma:float):
   '''
@@ -73,8 +79,7 @@ def generate_linear_data(n:int, theta:np.array, sigma:float):
       X the design matrix shape is (n x d)
       y the associated labels shape is (n,)
   '''
-  X = np.random.rand(n, len(theta))
-  X = normalize(X, norm='l2')
+  X = np.random.rand(n, len(theta)) # now don't normalize row-wise!
   y = X @ theta + np.random.normal(0, sigma, size=n)
   return X, y
 
