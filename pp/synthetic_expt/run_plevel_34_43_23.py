@@ -27,12 +27,12 @@ for d in D:
     # theta = theta.reshape((d,))
     for n in N:
         X, y = generate_linear_data(n = n, d = d, sigma = 0)
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 21)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 21)
         N_train, N_test = len(X_train), len(X_test)
 
         # Privacy Levels
         # epsilons = epsilons_34_43_23(N_train)
-        epsilons = set_epsilons(N_train, f_c=0.34, f_m=0.43, f_l=0.23, eps_c=0.01, eps_m=0.2, eps_l=1.0)
+        epsilons = set_epsilons(N_train, f_c=0.34, f_m=0.43, eps_c=0.01, eps_m=0.2, eps_l=1.0)
 
         print(f"d: {d}, n: {n}")
 
