@@ -124,3 +124,25 @@ def epsilons_34_43_23(N_train: int) -> np.ndarray:
   epsilons[int(0.34*N_train) : int(0.77 * N_train)] = 0.5 # 43% care little abt privacy (PRAGMATISTS)
   epsilons[int(0.77 * N_train) : ] = 1.0 # 23% dont care (UNCONCERNED)
   return epsilons
+
+
+def set_epsilons(N_train : int, f_c : float, f_m : float, f_l : float, eps_c : float, eps_m : float, eps_l=1.0) -> np.ndarray:
+  '''
+  Distribution of privacy levels
+
+  f_c : fraction of high privacy level individuals (conservatives)
+  f_m : fraction of medium privacy level individuals
+  f_l : fraction of low privacy level individuals
+  eps_c : high privacy level (lower epsilon)
+  eps_m : medium privacy level
+  eps_l : low privacy level (higher epsilon)
+
+  Returns :
+    An array with values of the privacy levels for every individual in the dataset
+  '''
+
+  c = np.random.uniform(eps_c, eps_m, size=int(f_c*N_train))
+  m = np.random.uniform(eps_m, eps_l, size=int(f_m*N_train))
+  h = np.array([eps_l]*int(f_l*N_train))
+
+  return np.concatenate((c, m, h), axis=None)

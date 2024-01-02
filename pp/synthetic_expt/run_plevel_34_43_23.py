@@ -10,7 +10,7 @@ sys.path.append('../')
 # from src utils
 # from src import estimator
 
-from src.utils import generate_linear_data, epsilons_34_43_23
+from src.utils import generate_linear_data, set_epsilons
 from src.estimator import pp_estimator, jorgensen_private_estimator
 
 Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 1.1, 1.3, 1.5]
@@ -31,7 +31,8 @@ for d in D:
         N_train, N_test = len(X_train), len(X_test)
 
         # Privacy Levels
-        epsilons = epsilons_34_43_23(N_train)
+        # epsilons = epsilons_34_43_23(N_train)
+        epsilons = set_epsilons(N_train, f_c=0.34, f_m=0.43, f_l=0.23, eps_c=0, eps_m=0.5, eps_l=1.0)
 
         print(f"d: {d}, n: {n}")
 
