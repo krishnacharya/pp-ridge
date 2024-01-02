@@ -1,6 +1,5 @@
 from sklearn.preprocessing import normalize, MinMaxScaler
 import numpy as np
-import pandas as pd
 
 def weighted_rls_solution(weights:np.ndarray, X: np.ndarray, y:np.ndarray, lamb:float = 1.0) -> np.ndarray:
   """
@@ -69,18 +68,20 @@ def compute_private_estimator(minimizer:np.ndarray, eta:float) -> np.ndarray:
   d = len(minimizer)
   return minimizer + sample_l2lap(eta, d).reshape(d, -1)
 
-def generate_linear_data(n:int, theta:np.array, sigma:float):
+def generate_linear_data(n:int, d:int, sigma:float):
   '''
     Input:
       n: number of datapoints
-      theta: the true theta used to generate the data, shape (d,), one dimensional array
+      d: dimension of feature
       sigma: std for gaussian noise for the synthetic linear data
     returns
-      X the design matrix shape is (n x d)
-      y the associated labels shape is (n,)
+      X the design matrix shape is (n x d) each element in the matrix is in [0, 1]
+      y the associated labels shape is (n,) 
   '''
-  X = np.random.rand(n, len(theta)) # now don't normalize row-wise!
-  y = X @ theta + np.random.normal(0, sigma, size=n)
+  X = np.random.rand(n, d) # entries uniform in [0,1), thus each row ||x_i|| bounded by \sqrt{d}
+  theta = np.random.normal(0, 1, d) # d iid gaussian each entry N(0, 1)
+  theta = theta / np.linalg.norm(theta) # theta is uniformly distributed on the surface of unit sphere, shape (d,)
+  y = (X @ theta) / d**0.5 + np.random.normal(0, sigma, size=n) # so essentially the learner is trying to recover \theta / d**0.5
   return X, y
 
 def dataset_mask_jorgensen(epsilons:np.ndarray, thresh:float) -> np.ndarray:
