@@ -125,7 +125,7 @@ def epsilons_34_43_23(N_train: int) -> np.ndarray:
   epsilons[int(0.77 * N_train) : ] = 1.0 # 23% dont care (UNCONCERNED)
   return epsilons
 
-def set_epsilons(N_train : int, f_c : float, f_m : float, f_l : float, eps_c : float, eps_m : float, eps_l=1.0) -> np.ndarray:
+def set_epsilons(N_train : int, f_c : float, f_m : float, eps_c : float, eps_m : float, eps_l=1.0) -> np.ndarray:
   '''
   Distribution of privacy levels
 
