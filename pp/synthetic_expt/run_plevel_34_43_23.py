@@ -13,11 +13,11 @@ sys.path.append('../')
 from src.utils import generate_linear_data, set_epsilons
 from src.estimator import pp_estimator, jorgensen_private_estimator
 
-Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 1.1, 1.3, 1.5]
+# Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 1.1, 1.3, 1.5]
 N = [10,50,100,200]
 D = [10,20,30,40]
 runs = 10000
-
+Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 1, 3, 5, 7, 10, 25, 50, 75, 100]
 
 list_of_results = []
 i = 0
@@ -58,4 +58,4 @@ for d in D:
 
 df = pd.DataFrame(list_of_results)
 
-df.to_csv('../plevel_34_43_23_result_lastsqrt.csv', encoding='utf-8', index=False)
+df.to_csv('../plevel_34_43_23_result_findlambs.csv', encoding='utf-8', index=False)
