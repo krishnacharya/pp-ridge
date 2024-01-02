@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 
 import numpy as np
 import pandas as pd
+import math
 
 import sys
 sys.path.append('../')
@@ -36,6 +37,8 @@ for d in D:
         for lamb in Lamb:
             # pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_test, runs)
             # jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_test, runs)
+            lamb = lamb * math.sqrt(d)
+            
             pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs)
             jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs)
 
