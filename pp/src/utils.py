@@ -26,6 +26,7 @@ def evaluate_weighted_rls_objective(theta: np.ndarray, weights:np.ndarray, X: np
       y: yvalues shape (n,1) or (n,)
       lamb: L2 regularization parameter, default 1.0
     Note: If you want to evaluate the objective on equal weighted rls objective just pass weights as 1/n...1/n
+    Returns RMSE of weighted sse + regularization
   """
   n, d = X.shape
   theta = theta.reshape(d, -1) # now shape (d, 1)
@@ -129,9 +130,9 @@ def set_epsilons(N_train : int, f_c : float, f_m : float, eps_c : float, eps_m :
   '''
   Distribution of privacy levels
 
-  f_c : fraction of high privacy level individuals (conservatives)
-  f_m : fraction of medium privacy level individuals
-  f_l : fraction of low privacy level individuals (1-(f_c+f_m))
+  f_c : fraction of high privacy level individuals (high)
+  f_m : fraction of medium privacy level individuals (medium)
+  f_l : fraction of low privacy level individuals (1-(f_c+f_m)) (low)
   eps_c : high privacy level (lower epsilon)
   eps_m : medium privacy level
   eps_l : low privacy level (higher epsilon)
@@ -139,9 +140,9 @@ def set_epsilons(N_train : int, f_c : float, f_m : float, eps_c : float, eps_m :
   Returns :
     An array with values of the privacy levels for every individual in the dataset
   '''
-
-  c = np.random.uniform(eps_c, eps_m, size=int(f_c*N_train))
-  m = np.random.uniform(eps_m, eps_l, size=int(f_m*N_train))
-  h = np.array([eps_l]*int((1-(f_c+f_m))*N_train))
-
+  N_low, N_medium = int(f_c*N_train), int(f_m*N_train)
+  N_high = N_train - N_low - N_medium
+  c = np.random.uniform(eps_c, eps_m, size = N_low)
+  m = np.random.uniform(eps_m, eps_l, size = N_medium)
+  h = np.array([eps_l] * N_high)
   return np.concatenate((c, m, h), axis=None)

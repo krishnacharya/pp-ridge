@@ -36,6 +36,14 @@ class TestUtils(unittest.TestCase):
         theta_2 = np.array([0, 0])
         ls_on_theta2 = evaluate_weighted_rls_objective(theta = theta_2, weights = np.ones(2)/2, X=X, y=y, lamb=0)
         np.testing.assert_allclose(ls_on_theta2, ((3**2 + 5**2)/2)**0.5)
+    
+    def test_set_epsilons(self):
+        N_train = 100
+        epsilons = set_epsilons(N_train, f_c=0.34, f_m=0.43, eps_c=0.01, eps_m=0.2, eps_l=1.0)
+        self.assertEqual(epsilons.shape, (N_train,))
+        np.testing.assert_allclose(np.sum((epsilons > 0.01) & (epsilons <= 0.2)) / N_train, 0.34, atol = 0.05)
+        np.testing.assert_allclose(np.sum((epsilons > 0.2) & (epsilons < 1)) / N_train, 0.43, atol = 0.05)
+        np.testing.assert_allclose(np.sum((epsilons >=1) / N_train), 0.23, atol = 0.05)
 
 if __name__ == '__main__':
     unittest.main()
