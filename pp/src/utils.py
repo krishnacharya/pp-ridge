@@ -76,7 +76,7 @@ def generate_linear_data(n:int, d:int, sigma:float):
       sigma: std for gaussian noise for the synthetic linear data
     returns
       X the design matrix shape is (n x d) each element in the matrix is in [0, 1]
-      y the associated labels shape is (n,) 
+      y the associated labels shape is (n,) each y is in [-1, 1]
   '''
   X = np.random.rand(n, d) # entries uniform in [0,1), thus each row ||x_i|| bounded by \sqrt{d}
   theta = np.random.normal(0, 1, d) # d iid Gaussian each entry N(0, 1)
