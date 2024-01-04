@@ -18,16 +18,19 @@ df_medical_mm_oh = one_hot(df_medical_mm, cat_all)
 df_medical_mm_oh.drop(cat_all, axis = 1, inplace=True) # drop the categorics that were used to one hot encode
 df_medical_mm_oh = df_medical_mm_oh * 1.0 # make bool true, false into 1.0, 0.0
 
-X = df_medical_mm_oh.drop('charges', axis=1).to_numpy()
+X = df_medical_mm_oh.drop('charges', axis=1)
+X['intercept'] = 1.0
+X = X.to_numpy() # now (n, d+1) dimensional, linear regression in d+1 is affine in d
 y = df_medical_mm_oh['charges'].to_numpy()
-# X = normalize(X, norm='l2') # each row is L2 normalized, no need to do this, each x_i in [0,1] works with the new sensitivity
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state = seed)
 print("Training data x, y shapes", X_train.shape, y_train.shape)
 print("Test data x, y shapes", X_test.shape, y_test.shape)
-dim = X_train.shape[1] # d
+
 # N_test = len(y_test)
-Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 1.1, 1.3, 1.5]
+# Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 1.1, 1.3, 1.5]
+# Lamb = np.arange(0, 100.5, 0.5)[1:] #0.5, ... 100
+Lamb = [0.01, 0.05, 1, 2, 5, 10, 15, 20, 30, 40, 50]
 frac_of_train_dataset = np.arange(0.1, 1.1, 0.1) # fraction of training dataset used [0.1, ... 1.0]
 runs = 10000
 
@@ -42,7 +45,6 @@ for f in frac_of_train_dataset: # varying the number of trianing data points use
     epsilons = epsilons_54_37_9(N_train_frac)
     print(f"frac: {f}")
     for lamb in Lamb:
-        lamb = lamb * (dim**0.5)
         pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs)
         jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs)
         di = {"frac_train": f,
@@ -61,4 +63,4 @@ for f in frac_of_train_dataset: # varying the number of trianing data points use
         list_of_results.append(di)
         i += 1
 df = pd.DataFrame(list_of_results)
-df.to_csv('../insurance_data_plevel_54_37_9_sqrtdlambda.csv', encoding='utf-8', index=False)
+df.to_csv('../insurance_data_plevel_54_37_9_affine_lambdasbig.csv', encoding='utf-8', index=False)
