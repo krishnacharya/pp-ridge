@@ -35,7 +35,7 @@ for d in D:
 
         Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 1, 3, 5, 7, 10, 25, 50, 75, 100]
         print(f"d: {d}, n: {n}")
-        
+
         c, p = 0, 0
         for lamb in Lamb:
             # pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_test, runs)
@@ -52,7 +52,7 @@ for d in D:
             if len(check_test_vals) >= 2:
                 if check_test_vals[c-1] <= check_test_vals[c]:
                     p += 1
-                    Lamb.append(Lamb[c]*2)
+                    Lamb.insert(c+1, Lamb[c]*2)
             
             di = {"d": d,
                 "n": n,
