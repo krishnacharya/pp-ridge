@@ -50,7 +50,7 @@ for d in D:
 
             check_test_vals.append(pp_w_test_mean)
             if len(check_test_vals) >= 2:
-                if check_test_vals[c+1] >= check_test_vals[c]:
+                if check_test_vals[c-1] <= check_test_vals[c]:
                     p += 1
                     Lamb.append(Lamb[c]*2)
             
