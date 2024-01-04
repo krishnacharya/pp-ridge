@@ -67,7 +67,10 @@ def compute_private_estimator(minimizer:np.ndarray, eta:float) -> np.ndarray:
     minimizer: shape (d,1), minimizer of ridge regression
   '''
   d = len(minimizer)
-  return minimizer + sample_l2lap(eta, d).reshape(d, -1)
+  if eta == 0:
+    return minimizer
+  else:
+    return minimizer + sample_l2lap(eta, d).reshape(d, -1)
 
 def generate_linear_data(n:int, d:int, sigma:float):
   '''
