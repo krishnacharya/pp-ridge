@@ -34,7 +34,7 @@ def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_la
     theta_hat_pp = compute_private_estimator(sol_exact_ridge_pp, eta_pp) # exact solution on weighted training + noise
     unweighted_train.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_train, X_train, y_train, eval_lamb)) # evaluate with lambda = 0, don't add regularizer for evaluation!
     unweighted_test.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_test, X_test, y_test, eval_lamb))
-  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test), np.mean(exact_loss_ridge)
+  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test)
 
 # JORGENSEN PRIVATE ESTIMATOR
 
