@@ -24,17 +24,19 @@ def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_la
   uniform_weight_train = np.ones(N_train) / N_train
   uniform_weight_test = np.ones(N_test) / N_test
 
-  print("pluggin exact soln back into weighted ridge", evaluate_weighted_rls_objective(sol_exact_ridge_pp, uniform_weight_test, X_test, y_test, eval_lamb))  
+  print("pluggin exact soln back into weighted ridge", evaluate_weighted_rls_objective(sol_exact_ridge_pp, uniform_weight_test, X_test, y_test, eval_lamb))
+  exact_loss_ridge = []
   # weighted_erm = []
   for _ in range(runs):
+    exact_loss_ridge.append(evaluate_weighted_rls_objective(sol_exact_ridge_pp, uniform_weight_test, X_test, y_test, eval_lamb))
     theta_hat_pp = compute_private_estimator(sol_exact_ridge_pp, eta_pp) # exact solution on weighted training + noise
     unweighted_train.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_train, X_train, y_train, eval_lamb)) # evaluate with lambda = 0, don't add regularizer for evaluation!
     unweighted_test.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_test, X_test, y_test, eval_lamb))
-  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test)
+  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test), np.mean(exact_loss_ridge)
 
 # JORGENSEN PRIVATE ESTIMATOR
 
-def jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0):
+def jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, sol_exact_ridge_pp, eval_lamb=0):
   '''
     X_train: np.ndarray of shape (n, d)
     epsilons: must be a numpy array of shape (len(X_train),)
@@ -50,6 +52,9 @@ def jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb
 
   unweighted_train = []
   unweighted_test = []
+
+  exact_theta_bar_loss = []
+
   for _ in range(runs):
     mask = dataset_mask_jorgensen(epsilons, thresh) # which datapoint in X_train, y_train to mask, shape (N_train)
     X_samp = X_train[mask.astype(bool)]
@@ -60,7 +65,8 @@ def jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb
     # now do DP with global threshold thresh, on the sampled data, using our framewor/sensitivity calculations
     theta_bar = weighted_rls_solution(unif_weight_samp, X_samp, y_samp, lamb) # unweighted soln with sampled data
     eta = compute_eta(lamb = lamb, tot_epsilon=tot_epsilon, d = d)
+    exact_theta_bar_loss.append(evaluate_weighted_rls_objective(theta_bar, uniform_weight_test, X_test, y_test, eval_lamb))
     theta_hat = compute_private_estimator(theta_bar, eta)
     unweighted_train.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_train, X_train, y_train, eval_lamb))
     unweighted_test.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_test, X_test, y_test, eval_lamb))
-  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test)
+  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test), np.mean(exact_theta_bar_loss)
