@@ -19,6 +19,7 @@ runs = 10000
 Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 1, 3, 5, 7, 10, 25, 50, 75, 100]
 
 list_of_results = []
+check_test_vals = []
 i = 0
 for d in D:
     # theta = np.random.uniform(0, 1, size=d)
@@ -35,14 +36,22 @@ for d in D:
 
 
         print(f"d: {d}, n: {n}")
-
+        
+        c = 0
         for lamb in Lamb:
             # pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_test, runs)
             # jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, N_train, N_test, runs)
+            if lamb >= 1000:
+                break
             lamb = lamb * math.sqrt(d)
             pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs)
             jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs)
-
+            
+            check_test_vals.append(pp_w_test_mean)
+            if len(check_test_vals) >= 2:
+                if check_test_vals[c+1] >= check_test_vals[c]:
+                    Lamb.append(Lamb[c]*2)
+            
             di = {"d": d,
                 "n": n,
                 "lamb": lamb,
@@ -55,6 +64,7 @@ for d in D:
                 "jorg_test_mean": jorg_w_test_mean,
                 "jorg_test_std": jorg_w_test_std}
             i += 1
+            c += 1
             print(f"Expt {i} done, lambda {lamb}")
             list_of_results.append(di)
 

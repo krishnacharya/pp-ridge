@@ -20,6 +20,7 @@ runs = 10000
 Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 1, 3, 5, 7, 10, 25, 50, 75, 100]
 
 list_of_results = []
+check_test_vals = []
 i = 0
 for d in D:
     # theta = np.random.uniform(0, 1, size=d)
@@ -35,11 +36,21 @@ for d in D:
         epsilons = set_epsilons(N_train, f_c=0.34, f_m=0.43, eps_c=0.01, eps_m=0.2, eps_l=1.0)
 
         print(f"d: {d}, n: {n}")
-
+        
+        c = 0
         for lamb in Lamb:
+            if lamb >= 1000:
+                break 
             lamb = lamb * d
-            pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs)
-            jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs)
+            pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
+            jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
+            
+
+            check_test_vals.append(pp_w_test_mean)
+            if len(check_test_vals) >= 2:
+                if check_test_vals[c+1] >= check_test_vals[c]:
+                    Lamb.append(Lamb[c]*2)
+            
 
             di = {"d": d,
                 "n": n,
@@ -53,8 +64,11 @@ for d in D:
                 "jorg_test_mean": jorg_w_test_mean,
                 "jorg_test_std": jorg_w_test_std}
             i += 1
+            c += 1
             print(f"Expt {i} done, lambda {lamb}")
             list_of_results.append(di)
+
+            
 
 df = pd.DataFrame(list_of_results)
 

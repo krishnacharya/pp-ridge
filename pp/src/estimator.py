@@ -6,7 +6,7 @@ from src.utils import weighted_rls_solution, compute_eta, compute_private_estima
 
 ## PP-ESTIMATOR
 
-def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs):
+def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0):
   '''
     X_train: np.ndarray of shape (n, d)
     epsilons: must be a numpy array of shape (len(X_train),)
@@ -27,13 +27,13 @@ def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs):
   # weighted_erm = []
   for _ in range(runs):
     theta_hat_pp = compute_private_estimator(sol_exact_ridge_pp, eta_pp) # exact solution on weighted training + noise
-    unweighted_train.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_train, X_train, y_train, 0)) # evaluate with lambda = 0, don't add regularizer for evaluation!
-    unweighted_test.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_test, X_test, y_test, 0))
+    unweighted_train.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_train, X_train, y_train, eval_lamb)) # evaluate with lambda = 0, don't add regularizer for evaluation!
+    unweighted_test.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_test, X_test, y_test, eval_lamb))
   return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test)
 
 # JORGENSEN PRIVATE ESTIMATOR
 
-def jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs):
+def jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0):
   '''
     X_train: np.ndarray of shape (n, d)
     epsilons: must be a numpy array of shape (len(X_train),)
@@ -60,6 +60,6 @@ def jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb
     theta_bar = weighted_rls_solution(unif_weight_samp, X_samp, y_samp, lamb) # unweighted soln with sampled data
     eta = compute_eta(lamb = lamb, tot_epsilon=tot_epsilon, d = d)
     theta_hat = compute_private_estimator(theta_bar, eta)
-    unweighted_train.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_train, X_train, y_train, 0))
-    unweighted_test.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_test, X_test, y_test, 0))
+    unweighted_train.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_train, X_train, y_train, eval_lamb))
+    unweighted_test.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_test, X_test, y_test, eval_lamb))
   return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test)
