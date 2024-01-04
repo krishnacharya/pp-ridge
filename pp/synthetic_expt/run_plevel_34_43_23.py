@@ -34,7 +34,7 @@ for d in D:
         # epsilons = epsilons_34_43_23(N_train)
         epsilons = set_epsilons(N_train, f_c=0.34, f_m=0.43, eps_c=0.01, eps_m=0.2, eps_l=1.0)
 
-        Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 1, 3, 5, 7, 10, 25, 50, 75, 100]
+        Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 1, 3, 5, 7, 10, 25, 50, 75, 100, 10000, 1e5, 1e6]
         print(f"d: {d}, n: {n}")
  
         c, p = 0, 0
@@ -52,8 +52,8 @@ for d in D:
             if len(check_test_vals) >= 2:
                 if check_test_vals[c-1] <= check_test_vals[c]:
                     p += 1
-                    if Lamb[c]*2 not in Lamb:
-                        Lamb.insert(c+1, Lamb[c]*2)
+                    if Lamb[c]*5 not in Lamb:
+                        Lamb.insert(c+1, Lamb[c]*5)
             
 
             di = {"d": d,
