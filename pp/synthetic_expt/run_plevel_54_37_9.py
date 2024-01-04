@@ -45,6 +45,8 @@ for d in D:
             # if p >= 3:
             #     break
             lamb = lamb * d
+            if lamb >= 1e10:
+                break
             pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs)
             jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs)
             
