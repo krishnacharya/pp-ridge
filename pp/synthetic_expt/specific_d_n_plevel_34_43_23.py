@@ -88,9 +88,10 @@ def run(N, D, lambds, runs=10000):
 
 if __name__ == "__main__":
 
-    args = argparse.ArgumentParser()
-    args.add_argument("d", default=10, type=int)
-    args.add_argument("n", default=100, type=int)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("d", default=10, type=int)
+    parser.add_argument("n", default=100, type=int)
+    args = parser.parse_args()
 
     N = [args.n]
     D = [args.d]
