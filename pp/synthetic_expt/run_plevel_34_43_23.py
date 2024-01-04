@@ -37,10 +37,12 @@ for d in D:
 
         print(f"d: {d}, n: {n}")
         
-        c = 0
+        c, p = 0, 0
         for lamb in Lamb:
-            if lamb >= 1000:
-                break 
+            # if lamb >= 1000:
+            #     break 
+            if p >= 3:
+                break
             lamb = lamb * d
             pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
             jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
@@ -49,6 +51,7 @@ for d in D:
             check_test_vals.append(pp_w_test_mean)
             if len(check_test_vals) >= 2:
                 if check_test_vals[c+1] >= check_test_vals[c]:
+                    p += 1
                     Lamb.append(Lamb[c]*2)
             
 
