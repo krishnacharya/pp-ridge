@@ -16,7 +16,6 @@ from src.estimator import pp_estimator, jorgensen_private_estimator
 N = [10,50,100,200]
 D = [10,20,30,40]
 runs = 10000
-Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 1, 3, 5, 7, 10, 25, 50, 75, 100]
 
 list_of_results = []
 check_test_vals = []
@@ -34,7 +33,7 @@ for d in D:
         # epsilons = epsilons_54_37_9(N_train)
         epsilons = set_epsilons(N_train, f_c=0.54, f_m=0.37, eps_c=0.01, eps_m=0.2, eps_l=1.0)
 
-
+        Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 1, 3, 5, 7, 10, 25, 50, 75, 100]
         print(f"d: {d}, n: {n}")
         
         c, p = 0, 0
@@ -70,6 +69,7 @@ for d in D:
             c += 1
             print(f"Expt {i} done, lambda {lamb}")
             list_of_results.append(di)
+        list_of_results.sort()
 
 df = pd.DataFrame(list_of_results)
 

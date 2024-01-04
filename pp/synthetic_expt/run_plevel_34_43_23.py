@@ -70,6 +70,7 @@ for d in D:
             c += 1
             print(f"Expt {i} done, lambda {lamb}")
             list_of_results.append(di)
+        list_of_results.sort()
 
             
 
