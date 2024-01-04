@@ -19,11 +19,12 @@ def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_la
   eta_pp = compute_eta(lamb = lamb, tot_epsilon=tot_epsilon, d = d)
   # print("eta for pp", eta_pp)
   # Do runs, in each calculate loss on unweighted train, unweighted test set loss of the private estimator; 1000 runs for randomness in L2 laplce dp noise
-  print("pluggin exact soln back into weighted ridge", evaluate_weighted_rls_objective(sol_exact_ridge_pp, weights_pp, X_test, y_test, eval_lamb))  
   unweighted_train = []
   unweighted_test = []
   uniform_weight_train = np.ones(N_train) / N_train
   uniform_weight_test = np.ones(N_test) / N_test
+
+  print("pluggin exact soln back into weighted ridge", evaluate_weighted_rls_objective(sol_exact_ridge_pp, uniform_weight_test, X_test, y_test, eval_lamb))  
   # weighted_erm = []
   for _ in range(runs):
     theta_hat_pp = compute_private_estimator(sol_exact_ridge_pp, eta_pp) # exact solution on weighted training + noise
