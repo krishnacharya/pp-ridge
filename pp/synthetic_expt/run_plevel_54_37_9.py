@@ -52,7 +52,8 @@ for d in D:
             if len(check_test_vals) >= 2:
                 if check_test_vals[c-1] <= check_test_vals[c]:
                     p += 1
-                    Lamb.insert(c+1, Lamb[c]*2)
+                    if Lamb[c]*2 not in Lamb:
+                        Lamb.insert(c+1, Lamb[c]*2)
             
             di = {"d": d,
                 "n": n,

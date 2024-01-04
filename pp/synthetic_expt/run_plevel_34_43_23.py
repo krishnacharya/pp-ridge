@@ -17,7 +17,6 @@ from src.estimator import pp_estimator, jorgensen_private_estimator
 N = [10,50,100,200]
 D = [10,20,30,40]
 runs = 10000
-Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 1, 3, 5, 7, 10, 25, 50, 75, 100]
 
 list_of_results = []
 check_test_vals = []
@@ -35,8 +34,9 @@ for d in D:
         # epsilons = epsilons_34_43_23(N_train)
         epsilons = set_epsilons(N_train, f_c=0.34, f_m=0.43, eps_c=0.01, eps_m=0.2, eps_l=1.0)
 
+        Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 1, 3, 5, 7, 10, 25, 50, 75, 100]
         print(f"d: {d}, n: {n}")
-        
+ 
         c, p = 0, 0
         for lamb in Lamb:
             # if lamb >= 1000:
@@ -52,7 +52,8 @@ for d in D:
             if len(check_test_vals) >= 2:
                 if check_test_vals[c-1] <= check_test_vals[c]:
                     p += 1
-                    Lamb.insert(c+1, Lamb[c]*2)
+                    if Lamb[c]*2 not in Lamb:
+                        Lamb.insert(c+1, Lamb[c]*2)
             
 
             di = {"d": d,
