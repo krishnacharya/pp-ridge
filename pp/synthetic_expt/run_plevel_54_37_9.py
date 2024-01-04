@@ -18,7 +18,7 @@ D = [10,20,30,40]
 runs = 10000
 
 list_of_results = []
-check_test_vals = []
+check_pp_test_vals, check_jorg_test_vals = [], []
 i = 0
 for d in D:
     # theta = np.random.uniform(0, 1, size=d)
@@ -50,9 +50,11 @@ for d in D:
             pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs)
             jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs)
             
-            check_test_vals.append(pp_w_test_mean)
-            if len(check_test_vals) >= 2:
-                if check_test_vals[c-1] <= check_test_vals[c]:
+            check_jorg_test_vals.append(jorg_w_test_mean)
+            
+            check_pp_test_vals.append(pp_w_test_mean)
+            if len(check_pp_test_vals) >= 2:
+                if check_pp_test_vals[c-1] <= check_pp_test_vals[c]:
                     p += 1
                     if Lamb[c]*5 not in Lamb:
                         Lamb.insert(c+1, Lamb[c]*5)
@@ -72,6 +74,9 @@ for d in D:
             c += 1
             print(f"Expt {i} done, lambda {lamb}")
             list_of_results.append(di)
+
+            if (lamb >= 1e10) or (abs(check_pp_test_vals[c]-check_jorg_test_vals[c])<=0.01):
+                break
 
 df = pd.DataFrame(list_of_results)
 
