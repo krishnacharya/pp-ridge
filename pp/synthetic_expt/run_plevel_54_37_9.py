@@ -70,13 +70,15 @@ for d in D:
                 "jorg_train_std": jorg_unw_train_std,
                 "jorg_test_mean": jorg_w_test_mean,
                 "jorg_test_std": jorg_w_test_std}
-            i += 1
-            c += 1
+            
             print(f"Expt {i} done, lambda {lamb}")
             list_of_results.append(di)
 
             if (lamb >= 1e10) or (abs(check_pp_test_vals[c]-check_jorg_test_vals[c])<=0.01):
                 break
+
+            i += 1
+            c += 1
 
 df = pd.DataFrame(list_of_results)
 
