@@ -18,7 +18,10 @@ def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_la
   tot_epsilon = np.sum(epsilons)
   weights_pp = epsilons / tot_epsilon # weights used in the ridge regression for personalized privacy
   sol_exact_ridge_pp = weighted_rls_solution(weights_pp, X_train, y_train, lamb) # weighted ridge on training set
-  eta_pp = compute_eta(lamb = lamb, tot_epsilon=tot_epsilon, d = d)
+  if lamb == 0:
+    eta_pp = 0
+  else:
+    eta_pp = compute_eta(lamb = lamb, tot_epsilon=tot_epsilon, d = d)
   # print("eta for pp", eta_pp)
   # Do runs, in each calculate loss on unweighted train, unweighted test set loss of the private estimator; 1000 runs for randomness in L2 laplce dp noise
   unweighted_train = []
@@ -65,7 +68,10 @@ def jorgensen_private_estimator(epsilons, thresh, X_train, y_train, X_test, y_te
     tot_epsilon = thresh * N_samp # Use global threshold epsilon as privacy level for each sampled datapoint
     # now do DP with global threshold thresh, on the sampled data, using our framewor/sensitivity calculations
     theta_bar = weighted_rls_solution(unif_weight_samp, X_samp, y_samp, lamb) # unweighted soln with sampled data
-    eta = compute_eta(lamb = lamb, tot_epsilon=tot_epsilon, d = d)
+    if lamb == 0:
+      eta = 0
+    else:
+      eta = compute_eta(lamb = lamb, tot_epsilon=tot_epsilon, d = d)
     theta_hat = compute_private_estimator(theta_bar, eta)
     unweighted_train.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_train, X_train, y_train, eval_lamb))
     unweighted_test.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_test, X_test, y_test, eval_lamb))
