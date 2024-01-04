@@ -17,23 +17,23 @@ def weighted_rls_solution(weights:np.ndarray, X: np.ndarray, y:np.ndarray, lamb:
   y_w = y.reshape(n, -1) * (weights**0.5)
   return np.linalg.solve(lamb * np.identity(d) + X_w.T @ X_w, X_w.T @ y_w)
 
-def evaluate_weighted_rls_objective(theta: np.ndarray, weights:np.ndarray, X: np.ndarray, y:np.ndarray, lamb:float = 1.0) -> float:
+def evaluate_weighted_rls_objective(theta: np.ndarray, weights:np.ndarray, X: np.ndarray, y:np.ndarray, lamb:float = 0.0) -> float:
   """
     Inputs
       theta: candidate vector for which we want to evaluate the objective value, shape (d, 1) or (d,)
       weights: one for each datapoint, shape (n,1) or (n,)
       X: design matrix shape (n, d)
       y: yvalues shape (n,1) or (n,)
-      lamb: L2 regularization parameter, default 1.0
+      lamb: L2 regularization parameter, default 0.0
     Note: If you want to evaluate the objective on equal weighted rls objective just pass weights as 1/n...1/n
-    Returns RMSE of weighted sse + regularization
+    Returns MSE of weighted sse + regularization
   """
   n, d = X.shape
   theta = theta.reshape(d, -1) # now shape (d, 1)
   weights = weights.reshape(n, -1) #now shape (n, 1)
   X_w = X * (weights**0.5) # shape (n, d)
   y_w = y.reshape(n, -1) * (weights**0.5) # shape (n, 1)
-  return (np.sum((X_w @ theta - y_w)**2) + lamb * np.linalg.norm(theta)**2)**0.5
+  return np.sum((X_w @ theta - y_w)**2) + lamb * np.linalg.norm(theta)**2
 
 def sample_l2lap(eta:float, d:int) -> np.array:
   """
