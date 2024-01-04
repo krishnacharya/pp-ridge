@@ -44,8 +44,8 @@ def run(N, D, lambds, runs=10000):
                 # lamb = lamb * d
 
                 
-                pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
-                jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
+                pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std, exact_loss_ridge = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
+                jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std, exact_loss_jorg = jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
                 
                 # check_jorg_test_vals.append(jorg_w_test_mean)
 
@@ -60,6 +60,9 @@ def run(N, D, lambds, runs=10000):
                 di = {"d": d,
                     "n": n,
                     "lamb": lamb,
+                    "exact_loss_ridge": exact_loss_ridge,
+                    "exact_loss_jorg": exact_loss_jorg,
+                    "baseline": exact_loss_ridge + exact_loss_jorg,
                     "pp_train_mean": pp_unw_train_mean,
                     "pp_train_std": pp_unw_train_std,
                     "pp_test_mean": pp_w_test_mean,
@@ -81,10 +84,10 @@ def run(N, D, lambds, runs=10000):
 
     df = pd.DataFrame(list_of_results)
 
-    if not os.path.exists("../result"):
-        os.mkdir("../result")
+    if not os.path.exists("../csv_outputs"):
+        os.mkdir("../csv_outputs")
 
-    df.to_csv(f'../specific_{d}_{n}_plevel_34_43_23_result.csv', encoding='utf-8', index=False)
+    df.to_csv(f'../csv_outputs/specific_{d}_{n}_plevel_34_43_23_result.csv', encoding='utf-8', index=False)
 
 if __name__ == "__main__":
 

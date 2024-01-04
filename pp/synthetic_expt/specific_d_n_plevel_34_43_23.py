@@ -84,10 +84,10 @@ def run(N, D, lambds, runs=10000):
 
     df = pd.DataFrame(list_of_results)
 
-    if not os.path.exists("../result"):
-        os.mkdir("../result")
+    if not os.path.exists("../csv_outputs"):
+        os.mkdir("../csv_outputs")
 
-    df.to_csv(f'../result/specific_{d}_{n}_plevel_34_43_23_result.csv', encoding='utf-8', index=False)
+    df.to_csv(f'../csv_outputs/specific_{d}_{n}_plevel_34_43_23_result.csv', encoding='utf-8', index=False)
 
 if __name__ == "__main__":
 
