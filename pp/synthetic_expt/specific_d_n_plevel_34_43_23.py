@@ -66,16 +66,19 @@ def run(N, D, lambds, runs=10000):
                     "n": n,
                     "lamb": lamb,
                     "pp_baseline_test_mean": pp_baseline_test_mean,
+                    "pp_train_mean": pp_train_mean,
+                    "pp_test_mean": pp_test_mean,
+                    "jorg_train_mean": jorg_train_mean,
+                    "jorg_test_mean": jorg_test_mean,
                     "jorg_baseline_test_mean": jorg_baseline_test_mean,
                     "baseline": pp_baseline_test_mean + jorg_baseline_test_mean,
-                    "pp_train_mean": pp_train_mean,
                     "pp_train_std": pp_train_std,
-                    "pp_test_mean": pp_test_mean,
-                    "pp_test_std": pp_test_std,
-                    "jorg_train_mean": jorg_train_mean,
                     "jorg_train_std": jorg_train_std,
-                    "jorg_test_mean": jorg_test_mean,
-                    "jorg_test_std": jorg_test_std}
+                    "pp_baseline_test_std": pp_baseline_test_std,
+                    "pp_test_std": pp_test_std,
+                    "jorg_baseline_test_std": jorg_baseline_test_std,
+                    "jorg_test_std": jorg_test_std
+                    }
                 
                 print(f"Expt {i} done, lambda {lamb}")
                 list_of_results.append(di)
