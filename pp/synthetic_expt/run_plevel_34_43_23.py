@@ -17,9 +17,9 @@ from src.estimator import pp_estimator, jorgensen_private_estimator
 N = [10,50,100,200]
 D = [10,20,30,40]
 runs = 10000
-Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 1, 3, 5, 7, 10, 25, 50, 75, 100]
 
 list_of_results = []
+check_pp_test_vals, check_jorg_test_vals = [], []
 i = 0
 for d in D:
     # theta = np.random.uniform(0, 1, size=d)
@@ -34,12 +34,29 @@ for d in D:
         # epsilons = epsilons_34_43_23(N_train)
         epsilons = set_epsilons(N_train, f_c=0.34, f_m=0.43, eps_c=0.01, eps_m=0.2, eps_l=1.0)
 
+        Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 1, 3, 5, 7, 10, 25, 50, 75, 100, 10000, 1e5, 1e6]
         print(f"d: {d}, n: {n}")
-
+ 
+        c, p = 0, 0
         for lamb in Lamb:
+            # if lamb >= 1000:
+            #     break 
+            
             lamb = lamb * d
-            pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs)
-            jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs)
+
+            
+            pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
+            jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
+            
+            check_jorg_test_vals.append(jorg_w_test_mean)
+
+            check_pp_test_vals.append(pp_w_test_mean)
+            if len(check_pp_test_vals) >= 2:
+                if check_pp_test_vals[c-1] <= check_pp_test_vals[c]:
+                    p += 1
+                    if Lamb[c]*2 not in Lamb:
+                        Lamb.insert(c+1, Lamb[c]*2)
+            
 
             di = {"d": d,
                 "n": n,
@@ -52,9 +69,16 @@ for d in D:
                 "jorg_train_std": jorg_unw_train_std,
                 "jorg_test_mean": jorg_w_test_mean,
                 "jorg_test_std": jorg_w_test_std}
-            i += 1
+            
             print(f"Expt {i} done, lambda {lamb}")
             list_of_results.append(di)
+
+            if (lamb >= 1e10) or (abs(check_pp_test_vals[c]-check_jorg_test_vals[c])<=0.01):
+                break
+            i += 1
+            c += 1
+
+            
 
 df = pd.DataFrame(list_of_results)
 
