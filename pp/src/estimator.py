@@ -4,20 +4,33 @@ sys.path.append('../')
 
 from src.utils import weighted_rls_solution, compute_eta, compute_private_estimator, evaluate_weighted_rls_objective, dataset_mask_jorgensen
 
+## NON-PRIVATE SOLUTION
+
+def nonpriv_solution(N_train, N_test, X_train, y_train, X_test, y_test, lamb, eval_lamb=0):
+
+  uniform_weight_train = np.ones(N_train) / N_train
+  exact_soln = weighted_rls_solution(uniform_weight_train, X_train, y_train, lamb)
+  uniform_weight_test = np.ones(N_test) / N_test
+  exact_loss_ridge = evaluate_weighted_rls_objective(exact_soln, uniform_weight_test, X_test, y_test, eval_lamb)
+
+  return exact_loss_ridge
+
+
 ## PP-ESTIMATOR
 
-def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0, baseline=False):
+def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0, non_personalized=False):
   '''
     X_train: np.ndarray of shape (n, d)
     epsilons: must be a numpy array of shape (len(X_train),)
   '''
   N_train, d =  X_train.shape
   N_test =  len(X_test)
-  if baseline:
+  if non_personalized:
     epsilons = np.array([min(epsilons)]*N_train)
   tot_epsilon = np.sum(epsilons)
   weights_pp = epsilons / tot_epsilon # weights used in the ridge regression for personalized privacy
   sol_exact_ridge_pp = weighted_rls_solution(weights_pp, X_train, y_train, lamb) # weighted ridge on training set
+  # sanity check
   if lamb == 0:
     eta_pp = 0
   else:
