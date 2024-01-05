@@ -31,12 +31,12 @@ def run(N, D, lambds, runs=10000):
 
             # Privacy Levels
             # epsilons = epsilons_34_43_23(N_train)
-            epsilons = set_epsilons(N_train, f_c=0.54, f_m=0.37, eps_c=0.01, eps_m=0.2, eps_l=1.0)
+            epsilons = set_epsilons(N_train, f_c=0.34, f_m=0.43, eps_c=0.01, eps_m=0.2, eps_l=1.0)
+
+            jorg_thresh = max(epsilons)
 
             Lamb = lambds
             print(f"d: {d}, n: {n}")
-    
-            jorg_thresh = max(epsilons)
     
             c, p = 0, 0
             for lamb in Lamb:
@@ -45,15 +45,15 @@ def run(N, D, lambds, runs=10000):
                 
                 # lamb = lamb * d
 
-                unreg_pp_baseline_train_mean, unreg_pp_baseline_train_std, unreg_pp_baseline_test_mean, unreg_pp_baseline_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, 0, runs, eval_lamb=0, baseline=True)
-                pp_train_mean, pp_train_std, pp_test_mean, pp_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
-                _, _, pp_baseline_test_mean, pp_baseline_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0, baseline=True)
+                reg_pp_baseline_train_mean, reg_pp_baseline_train_std, reg_pp_baseline_test_mean, reg_pp_baseline_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, 0, runs, eval_lamb=lamb, baseline=True)
+                pp_train_mean, pp_train_std, pp_test_mean, pp_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb)
+                _, _, pp_baseline_test_mean, pp_baseline_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb, baseline=True)
                 
-                jorg_train_mean, jorg_train_std, jorg_test_mean, jorg_test_std = jorgensen_private_estimator(epsilons, jorg_thresh, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
+                jorg_train_mean, jorg_train_std, jorg_test_mean, jorg_test_std = jorgensen_private_estimator(epsilons, jorg_thresh, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb)
                 
                 jorg_thresh = min(epsilons)
-                unreg_jorg_baseline_train_mean, unreg_jorg_baseline_train_std, unreg_jorg_baseline_test_mean, unreg_jorg_baseline_test_std = jorgensen_private_estimator(epsilons, jorg_thresh, X_train, y_train, X_test, y_test, 0, runs, eval_lamb=0)
-                _, _, jorg_baseline_test_mean, jorg_baseline_test_std = jorgensen_private_estimator(epsilons, jorg_thresh, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
+                reg_jorg_baseline_train_mean, reg_jorg_baseline_train_std, reg_jorg_baseline_test_mean, reg_jorg_baseline_test_std = jorgensen_private_estimator(epsilons, jorg_thresh, X_train, y_train, X_test, y_test, 0, runs, eval_lamb=lamb)
+                _, _, jorg_baseline_test_mean, jorg_baseline_test_std = jorgensen_private_estimator(epsilons, jorg_thresh, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb)
                 
                 # check_jorg_test_vals.append(jorg_w_test_mean)
 
@@ -69,8 +69,8 @@ def run(N, D, lambds, runs=10000):
                     "n": n,
                     "lamb": lamb,
                     "pp_baseline_test_mean": pp_baseline_test_mean,
-                    "unreg_pp_baseline_test_mean": unreg_pp_baseline_test_mean,
-                    "unreg_jorg_baseline_test_mean": unreg_jorg_baseline_test_mean,
+                    "reg_pp_baseline_test_mean": reg_pp_baseline_test_mean,
+                    "reg_jorg_baseline_test_mean": reg_jorg_baseline_test_mean,
                     "pp_train_mean": pp_train_mean,
                     "pp_test_mean": pp_test_mean,
                     "jorg_train_mean": jorg_train_mean,
@@ -79,13 +79,12 @@ def run(N, D, lambds, runs=10000):
                     "pp_train_std": pp_train_std,
                     "jorg_train_std": jorg_train_std,
                     "pp_baseline_test_std": pp_baseline_test_std,
-                    "unreg_pp_baseline_test_std": unreg_pp_baseline_test_std,
+                    "reg_pp_baseline_test_std": reg_pp_baseline_test_std,
                     "pp_test_std": pp_test_std,
-                    "unreg_jorg_baseline_test_std": unreg_jorg_baseline_test_std,
+                    "reg_jorg_baseline_test_std": reg_jorg_baseline_test_std,
                     "jorg_baseline_test_std": jorg_baseline_test_std,
                     "jorg_test_std": jorg_test_std
                     }
-                
                 
                 print(f"Expt {i} done, lambda {lamb}")
                 list_of_results.append(di)
@@ -102,7 +101,7 @@ def run(N, D, lambds, runs=10000):
     if not os.path.exists("../csv_outputs"):
         os.mkdir("../csv_outputs")
 
-    df.to_csv(f'../csv_outputs/specific_{d}_{n}_plevel_34_43_23_result.csv', encoding='utf-8', index=False)
+    df.to_csv(f'../csv_outputs/reg_specific_{d}_{n}_plevel_34_43_23_result.csv', encoding='utf-8', index=False)
 
 if __name__ == "__main__":
 
@@ -113,11 +112,10 @@ if __name__ == "__main__":
 
     N = [args.n]
     D = [args.d]
-
+    
     lambds = [0.01, 0.1, 0.5, 1, 3, 5, 10, 15, 20, 25, 50, 75, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, \
               5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000, 9500, 10000]
     new_lambs = [10000 + i for i in range(0, 41000, 1000)]
-    
 
     runs = 10000
 
