@@ -36,7 +36,7 @@ def run(N, D, lambds, runs=10000):
 
             Lamb = lambds
             print(f"d: {d}, n: {n}")
-            
+
             for lamb in Lamb:
                 # if lamb >= 1000:
                 #     break 
@@ -128,7 +128,7 @@ def run(N, D, lambds, runs=10000):
     if not os.path.exists("../csv_outputs"):
         os.mkdir("../csv_outputs")
 
-    df.to_csv(f'../csv_outputs/specific_{d}_{n}_plevel_34_43_23_result.csv', encoding='utf-8', index=False)
+    df.to_csv(f'../csv_outputs/forplots_specific_{d}_{n}_plevel_34_43_23_result.csv', encoding='utf-8', index=False)
 
 if __name__ == "__main__":
 
