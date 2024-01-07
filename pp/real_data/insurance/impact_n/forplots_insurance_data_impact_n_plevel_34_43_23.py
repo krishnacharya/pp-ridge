@@ -12,7 +12,7 @@ seed = 21 # random seed
 def run():
 
     # Preprocessing
-    df_medical = pd.read_csv('../../datasets/insurance.csv')
+    df_medical = pd.read_csv('../../../datasets/insurance.csv')
     numeric_all = ['age', 'bmi', 'children', 'charges']
     cat_all = ['sex', 'smoker', 'region']
     df_medical_mm = numeric_scaler(df_medical, numeric_all) # minmax scaling for all numeric columns, so all elements in [0,1]
