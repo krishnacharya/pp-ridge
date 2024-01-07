@@ -53,10 +53,6 @@ def run():
         print(f"frac: {f}")
         for lamb in Lamb:
             
-            pp_unw_train_mean, pp_unw_train_std, pp_w_test_mean, pp_w_test_std = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs)
-            jorg_unw_train_mean, jorg_unw_train_std, jorg_w_test_mean, jorg_w_test_std = jorgensen_private_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs)
-            
-            
             # just for sanity check 
             _, _, unreg_pp_baseline_test_mean, unreg_pp_baseline_test_std = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, 0, runs, eval_lamb=0, non_personalized=True)
             # just for sanity check 
