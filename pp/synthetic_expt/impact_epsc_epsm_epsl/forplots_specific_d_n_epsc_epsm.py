@@ -6,7 +6,7 @@ import pandas as pd
 import math
 
 import os, sys, argparse
-sys.path.append('../')
+sys.path.append('../../')
 # from src utils
 # from src import estimator
 
@@ -118,7 +118,7 @@ def run(N, D, lambds, epsc, epsm, runs=10000):
                                 "jorg_baseline_test_std": jorg_baseline_test_std,
                                 }
                             
-                            print(f"Expt {i} done, lambda {lamb}")
+                            print(f"Expt {i} done, lambda {lamb}, eps_c {eps_c}, eps_m {eps_m}")
                             list_of_results.append(di)
 
                             # if (lamb >= 1e10) or (abs(check_pp_test_vals[c]-check_jorg_test_vals[c])<=0.01):
