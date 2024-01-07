@@ -77,6 +77,8 @@ def run(N, D, lambds, epsc, epsm, runs=10000):
                             
                             di = {"d": d,
                                 "n": n,
+                                "eps_c": eps_c, 
+                                "eps_m": eps_m,
                                 "lamb": lamb,
                                 "unreg_pp_test_mean": unreg_pp_test_mean,
                                 "unreg_nonpp_test_mean": unreg_nonpp_test_mean,
