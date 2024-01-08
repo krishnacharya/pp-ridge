@@ -124,7 +124,7 @@ def run(N, D, lambds, epsc, epsm, runs=10000):
                                 "unreg_theta_hat_pp_norm": unreg_theta_hat_pp_norm,
                                 "unreg_theta_hat_nonpp_norm": unreg_theta_hat_nonpp_norm,
                                 "reg_theta_hat_pp_norm": reg_theta_hat_pp_norm,
-                                "reg_theta_hat_pp_norm": reg_theta_hat_nonpp_norm,
+                                "reg_theta_hat_nonpp_norm": reg_theta_hat_nonpp_norm,
                                 "unreg_theta_hat_jorg_max_norm": unreg_theta_hat_jorg_max_norm,
                                 "unreg_theta_hat_jorg_avg_norm": unreg_theta_hat_jorg_avg_norm,
                                 "reg_theta_hat_jorg_max_norm": reg_theta_hat_jorg_max_norm,
