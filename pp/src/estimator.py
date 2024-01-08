@@ -45,12 +45,16 @@ def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_la
   # print("pluggin exact soln back into weighted ridge", evaluate_weighted_rls_objective(sol_exact_ridge_pp, uniform_weight_test, X_test, y_test, eval_lamb))
   # exact_loss_ridge = []
   # weighted_erm = []
+  theta_hat_pp_norm = []
+
   for _ in range(runs):
     # exact_loss_ridge.append(evaluate_weighted_rls_objective(sol_exact_ridge_pp, uniform_weight_test, X_test, y_test, eval_lamb))
     theta_hat_pp = compute_private_estimator(sol_exact_ridge_pp, eta_pp) # exact solution on weighted training + noise
+    theta_hat_pp_norm.append(np.linalg.norm(theta_hat_pp))
     unweighted_train.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_train, X_train, y_train, eval_lamb)) # evaluate with lambda = 0, don't add regularizer for evaluation!
     unweighted_test.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_test, X_test, y_test, eval_lamb))
-  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test)
+  
+  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test), np.mean(theta_hat_pp_norm)
 
 # JORGENSEN PRIVATE ESTIMATOR
 
@@ -71,6 +75,7 @@ def jorgensen_private_estimator(epsilons, thresh, X_train, y_train, X_test, y_te
 
   unweighted_train = []
   unweighted_test = []
+  theta_hat_norm = []
 
   for _ in range(runs):
     mask = dataset_mask_jorgensen(epsilons, thresh) # which datapoint in X_train, y_train to mask, shape (N_train)
@@ -86,6 +91,7 @@ def jorgensen_private_estimator(epsilons, thresh, X_train, y_train, X_test, y_te
     else:
       eta = compute_eta(lamb = lamb, tot_epsilon=tot_epsilon, d = d)
     theta_hat = compute_private_estimator(theta_bar, eta)
+    theta_hat_norm.append(np.linalg.norm(theta_hat))
     unweighted_train.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_train, X_train, y_train, eval_lamb))
     unweighted_test.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_test, X_test, y_test, eval_lamb))
-  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test)
+  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test), np.mean(theta_hat_norm)

@@ -33,7 +33,8 @@ def run(N, D, lambds, epsc, epsm, runs=10000):
             for eps_c in epsc:
                 for eps_m in epsm:
 
-                    if (eps_c == 0.01) or (eps_m == 0.5):
+                    if (eps_m == 0.5):
+                        # (eps_c == 0.01) or :
                         epsilons = set_epsilons(N_train, f_c=0.54, f_m=0.37, eps_c=eps_c, eps_m=eps_m, eps_l=1.0)
 
                         jorg_thresh_max, jorg_thresh_mean = max(epsilons), np.mean(epsilons)
@@ -48,11 +49,11 @@ def run(N, D, lambds, epsc, epsm, runs=10000):
                             # lamb = lamb * d
 
                             # just for sanity check 
-                            _, _, unreg_pp_baseline_test_mean, unreg_pp_baseline_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, 0, runs, eval_lamb=0, non_personalized=True)
+                            _, _, unreg_pp_baseline_test_mean, unreg_pp_baseline_test_std, _ = pp_estimator(epsilons, X_train, y_train, X_test, y_test, 0, runs, eval_lamb=0, non_personalized=True)
                             # just for sanity check 
                             jorg_thresh = min(epsilons)
-                            _, _, unreg_jorg_baseline_test_mean, unreg_jorg_baseline_test_std = jorgensen_private_estimator(epsilons, jorg_thresh, X_train, y_train, X_test, y_test, 0, runs, eval_lamb=0)
-                            _, _, jorg_baseline_test_mean, jorg_baseline_test_std = jorgensen_private_estimator(epsilons, jorg_thresh, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
+                            _, _, unreg_jorg_baseline_test_mean, unreg_jorg_baseline_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh, X_train, y_train, X_test, y_test, 0, runs, eval_lamb=0)
+                            _, _, jorg_baseline_test_mean, jorg_baseline_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
 
 
 
@@ -144,7 +145,7 @@ def run(N, D, lambds, epsc, epsm, runs=10000):
     if not os.path.exists("../csv_outputs"):
         os.mkdir("../csv_outputs")
 
-    df.to_csv(f'../csv_outputs/forplots_specific_{d}_{n}_eps_c_eps_m.csv', encoding='utf-8', index=False)
+    df.to_csv(f'../csv_outputs/forplots_specific_{d}_{n}_eps_c_eps_m_CHECK.csv', encoding='utf-8', index=False)
 
 if __name__ == "__main__":
 
@@ -156,7 +157,8 @@ if __name__ == "__main__":
     N = [args.n]
     D = [args.d]
     
-    lambds = [0.01, 0.1, 0.5, 1, 3, 5, 7, 10, 15, 20, 25, 50, 75, 100, 125, 150, 175, 200, 300, 400, 500, 1000]
+    # lambds = [0.01, 0.1, 0.5, 1, 3, 5, 7, 10, 15, 20, 25, 50, 75, 100, 125, 150, 175, 200, 300, 400, 500, 1000]
+    lambds = [50]
     # new_lambs = [10000 + i for i in range(0, 41000, 1000)]
 
     # f = [(0.1, 0.7), (0.3, 0.5), (0.5, 0.3), (0.7, 0.1), (0.9, 0.05)]
