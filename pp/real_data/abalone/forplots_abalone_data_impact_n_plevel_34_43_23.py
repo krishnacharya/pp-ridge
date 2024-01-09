@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../../../')
+sys.path.append('../../')
 from src.preprocessing import *
 from src.utils import *
 from src.estimator import *
