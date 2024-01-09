@@ -28,16 +28,16 @@ def run():
 
     # numeric_all = ['Length', 'Diameter', 'Height', 'Whole_weight', 'Shucked_weight', 'Viscera_weight', 'Shell_weight']
     # cat_all = ['Sex']
+    numeric_all = california.columns.to_list()
 
-    # X = one_hot(X, cat_all)
-    # X.drop(cat_all, axis = 1, inplace=True) # drop the categorics that were used to one hot encode
-    # X = X * 1.0 # make bool true, false into 1.0, 0.0
+    df_housing_mm = numeric_scaler(california, numeric_all) # minmax scaling for all numeric columns, so all elements in [0,1]
+    # df_medical_mm_oh = one_hot(df_housing_mm, cat_all)
+    # df_medical_mm_oh.drop(cat_all, axis = 1, inplace=True) # drop the categorics that were used to one hot encode
+    # df_medical_mm_oh = df_medical_mm_oh * 1.0 # make bool true, false into 1.0, 0.0
     
-    # X = np.c_[X, np.ones(X.shape[0])] # now (n, d+1) dimensional, linear regression in d+1 is affine in d
-    X = california.to_numpy() 
-    # label = 1*y
-    # y = y.to_numpy()
-
+    X = df_housing_mm.to_numpy()
+    X = np.c_[X, np.ones(X.shape[0])] # now (n, d+1) dimensional, linear regression in d+1 is affine in d
+    
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = seed)
     print("Training data x, y shapes", X_train.shape, y_train.shape)
     print("Test data x, y shapes", X_test.shape, y_test.shape)
