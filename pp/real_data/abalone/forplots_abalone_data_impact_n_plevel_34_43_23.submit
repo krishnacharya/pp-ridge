@@ -1,0 +1,15 @@
+############
+#
+# Example submit file for vanilla job
+#
+############
+getenv = True
+request_cpus = 2
+Universe       = vanilla
+Executable     = forplots_abalone_data_impact_n_plevel_34_43_23.py
+input   = /dev/null
+output  = forplots_abalone_data_impact_n_plevel_34_43_23.out
+error   = forplots_abalone_data_impact_n_plevel_34_43_23.error
+notification = error
+notification = complete
+queue
