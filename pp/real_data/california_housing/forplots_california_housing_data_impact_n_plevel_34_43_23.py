@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from sklearn.datasets import load_boston
+from sklearn.datasets import fetch_california_housing
 
 
 seed = 21 # random seed
@@ -20,11 +20,11 @@ def run():
     # cat_all = ['sex', 'smoker', 'region']
     
     # fetch dataset 
-    boston_dataset = load_boston()
+    housing = fetch_california_housing()
     
     # data (as pandas dataframes) 
-    boston = pd.DataFrame(boston_dataset.data, columns=boston_dataset.feature_names)
-    y = boston_dataset.target
+    california = pd.DataFrame(housing.data, columns=housing.feature_names)
+    y = housing.target
 
     # numeric_all = ['Length', 'Diameter', 'Height', 'Whole_weight', 'Shucked_weight', 'Viscera_weight', 'Shell_weight']
     # cat_all = ['Sex']
@@ -34,7 +34,7 @@ def run():
     # X = X * 1.0 # make bool true, false into 1.0, 0.0
     
     # X = np.c_[X, np.ones(X.shape[0])] # now (n, d+1) dimensional, linear regression in d+1 is affine in d
-    X = boston.to_numpy() 
+    X = california.to_numpy() 
     # label = 1*y
     y = y.to_numpy()
 
@@ -58,7 +58,7 @@ def run():
             X_tr_frac, _ , y_tr_frac, _ = train_test_split(X_train, y_train, train_size = f, random_state = seed)
         N_train_frac, N_test = len(X_tr_frac), len(X_test)
         
-        epsilons = set_epsilons(N_train_frac, f_c=0.54, f_m=0.37, eps_c=0.01, eps_m=0.2, eps_l=1.0)
+        epsilons = set_epsilons(N_train_frac, f_c=0.34, f_m=0.43, eps_c=0.01, eps_m=0.2, eps_l=1.0)
 
         jorg_thresh_max, jorg_thresh_mean = max(epsilons), np.mean(epsilons)
 
@@ -140,7 +140,7 @@ def run():
             i += 1
 
     df = pd.DataFrame(list_of_results)
-    df.to_csv(f'../forplots_boston_housing_data_impact_n_plevel_54_37_9_affine.csv', encoding='utf-8', index=False)
+    df.to_csv(f'../forplots_california_housing_data_impact_n_plevel_34_43_23_affine.csv', encoding='utf-8', index=False)
 
 
 if __name__ == "__main__":
