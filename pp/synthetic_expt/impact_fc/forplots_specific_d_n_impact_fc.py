@@ -45,30 +45,30 @@ def run(N, D, lambds, f, runs=10000):
                     # lamb = lamb * d
 
                     # just for sanity check 
-                    _, _, unreg_pp_baseline_test_mean, unreg_pp_baseline_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, 0, runs, eval_lamb=0, non_personalized=True)
+                    _, _, unreg_pp_baseline_test_mean, unreg_pp_baseline_test_std, _ = pp_estimator(epsilons, X_train, y_train, X_test, y_test, 0, runs, eval_lamb=0, non_personalized=True)
                     # just for sanity check 
                     jorg_thresh = min(epsilons)
-                    _, _, unreg_jorg_baseline_test_mean, unreg_jorg_baseline_test_std = jorgensen_private_estimator(epsilons, jorg_thresh, X_train, y_train, X_test, y_test, 0, runs, eval_lamb=0)
-                    _, _, jorg_baseline_test_mean, jorg_baseline_test_std = jorgensen_private_estimator(epsilons, jorg_thresh, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
+                    _, _, unreg_jorg_baseline_test_mean, unreg_jorg_baseline_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh, X_train, y_train, X_test, y_test, 0, runs, eval_lamb=0)
+                    _, _, jorg_baseline_test_mean, jorg_baseline_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
 
 
 
                     # 4.1 Type1
-                    unreg_pp_train_mean, unreg_pp_train_std, unreg_pp_test_mean, unreg_pp_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
-                    _, _, unreg_nonpp_test_mean, unreg_nonpp_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0, non_personalized=True)
+                    unreg_pp_train_mean, unreg_pp_train_std, unreg_pp_test_mean, unreg_pp_test_std, _ = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
+                    _, _, unreg_nonpp_test_mean, unreg_nonpp_test_std, _ = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0, non_personalized=True)
                     
                     # 4.1 Type2
-                    reg_pp_train_mean, reg_pp_train_std, reg_pp_test_mean, reg_pp_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb)
-                    _, _, reg_nonpp_test_mean, reg_nonpp_test_std = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb, non_personalized=True)
+                    reg_pp_train_mean, reg_pp_train_std, reg_pp_test_mean, reg_pp_test_std, _ = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb)
+                    _, _, reg_nonpp_test_mean, reg_nonpp_test_std, _ = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb, non_personalized=True)
 
                     # 4.3 Type1
-                    unreg_jorg_max_train_mean, unreg_jorg_max_train_std, unreg_jorg_max_test_mean, unreg_jorg_max_test_std = jorgensen_private_estimator(epsilons, jorg_thresh_max, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
-                    unreg_jorg_avg_train_mean, unreg_jorg_avg_train_std, unreg_jorg_avg_test_mean, unreg_jorg_avg_test_std = jorgensen_private_estimator(epsilons, jorg_thresh_mean, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
+                    unreg_jorg_max_train_mean, unreg_jorg_max_train_std, unreg_jorg_max_test_mean, unreg_jorg_max_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh_max, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
+                    unreg_jorg_avg_train_mean, unreg_jorg_avg_train_std, unreg_jorg_avg_test_mean, unreg_jorg_avg_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh_mean, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
                     type1_nonpriv_loss = nonpriv_solution(N_train, N_test, X_train, y_train, X_test, y_test, lamb=0, eval_lamb=0)
 
                     # 4.3 Type2
-                    reg_jorg_max_train_mean, reg_jorg_max_train_std, reg_jorg_max_test_mean, reg_jorg_max_test_std = jorgensen_private_estimator(epsilons, jorg_thresh_max, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb)
-                    reg_jorg_avg_train_mean, reg_jorg_avg_train_std, reg_jorg_avg_test_mean, reg_jorg_avg_test_std = jorgensen_private_estimator(epsilons, jorg_thresh_mean, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb)
+                    reg_jorg_max_train_mean, reg_jorg_max_train_std, reg_jorg_max_test_mean, reg_jorg_max_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh_max, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb)
+                    reg_jorg_avg_train_mean, reg_jorg_avg_train_std, reg_jorg_avg_test_mean, reg_jorg_avg_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh_mean, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb)
                     type2_nonpriv_loss = nonpriv_solution(N_train, N_test, X_train, y_train, X_test, y_test, lamb, eval_lamb=lamb)
                     
                     

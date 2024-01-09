@@ -23,3 +23,12 @@ def numeric_scaler(df, cols):
     mmscaler = MinMaxScaler()
     df_new[cols] = mmscaler.fit_transform(df_new[cols])
     return df_new
+
+def numeric_scaler_numpy(arr):
+    '''
+    arr (numpy array):  
+    '''
+    mmscaler = MinMaxScaler()
+    scaled_arr = mmscaler.fit_transform(arr)
+    return scaled_arr
+    
