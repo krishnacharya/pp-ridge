@@ -36,7 +36,7 @@ def run():
     # X = np.c_[X, np.ones(X.shape[0])] # now (n, d+1) dimensional, linear regression in d+1 is affine in d
     X = california.to_numpy() 
     # label = 1*y
-    y = y.to_numpy()
+    # y = y.to_numpy()
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = seed)
     print("Training data x, y shapes", X_train.shape, y_train.shape)
