@@ -23,7 +23,7 @@ def run():
     housing = fetch_california_housing()
     
     # data (as pandas dataframes) 
-    california = pd.DataFrame(housing.frame, columns=housing.feature_names)
+    california = housing.frame
     numeric_all = california.columns.to_list()
     cat_all = []
 
