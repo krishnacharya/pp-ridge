@@ -20,7 +20,7 @@ def run():
     # cat_all = ['sex', 'smoker', 'region']
     
     # fetch dataset 
-    housing = fetch_california_housing()
+    housing = fetch_california_housing(as_frame=True)
     
     # data (as pandas dataframes) 
     california = housing.frame
