@@ -54,11 +54,11 @@ def run():
         for lamb in Lamb:
             
             # just for sanity check 
-            _, _, unreg_pp_baseline_test_mean, unreg_pp_baseline_test_std = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, 0, runs, eval_lamb=0, non_personalized=True)
+            _, _, unreg_pp_baseline_test_mean, unreg_pp_baseline_test_std, _ = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, 0, runs, eval_lamb=0, non_personalized=True)
             # just for sanity check 
             jorg_thresh = min(epsilons)
-            _, _, unreg_jorg_baseline_test_mean, unreg_jorg_baseline_test_std = jorgensen_private_estimator(epsilons, jorg_thresh, X_tr_frac, y_tr_frac, X_test, y_test, 0, runs, eval_lamb=0)
-            _, _, jorg_baseline_test_mean, jorg_baseline_test_std = jorgensen_private_estimator(epsilons, jorg_thresh, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0)
+            _, _, unreg_jorg_baseline_test_mean, unreg_jorg_baseline_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh, X_tr_frac, y_tr_frac, X_test, y_test, 0, runs, eval_lamb=0)
+            _, _, jorg_baseline_test_mean, jorg_baseline_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0)
 
 
 
