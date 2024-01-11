@@ -31,8 +31,8 @@ def run(N, D, lambds, n_fracs, runs=10000):
             
             for n_frac in n_fracs:
                 num_train = int(n_frac*len(X_train))
-                X_train = X_train[:num_train]
-                N_train = len(X_train)
+                X_train, y_train = X_train[:num_train], y_train[:num_train]
+                N_train = num_train
 
                 epsilons = set_epsilons(N_train, f_c=0.54, f_m=0.37, eps_c=0.01, eps_m=0.2, eps_l=1.0)
 
