@@ -24,12 +24,14 @@ def run(N, D, lambds, n_fracs, runs=10000):
         # theta = normalize(theta.reshape(d, -1), axis=0, norm='l2')
         # theta = theta.reshape((d,))
         for n in N:
-            X, y = generate_linear_data(n = n, d = d, sigma = 0)
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 21)
-            N_train, N_test = len(X_train), len(X_test)
+            
 
             
             for n_frac in n_fracs:
+                X, y = generate_linear_data(n = n, d = d, sigma = 0)
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 21)
+                N_train, N_test = len(X_train), len(X_test)
+                
                 num_train = int(n_frac*len(X_train))
                 print(len(X_train))
                 print(X_train.shape)
