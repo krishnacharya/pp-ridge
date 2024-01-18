@@ -17,8 +17,6 @@ from src.estimator import pp_estimator, jorgensen_private_estimator, nonpriv_sol
 
 def run(N, D, lambds, n_fracs, runs=10000):
 
-    X, y = generate_linear_data(n = N, d = D, sigma = 0)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 21)
                 
     
     list_of_results = []
@@ -28,8 +26,10 @@ def run(N, D, lambds, n_fracs, runs=10000):
         # theta = normalize(theta.reshape(d, -1), axis=0, norm='l2')
         # theta = theta.reshape((d,))
         for n in N:
-            
 
+            X, y = generate_linear_data(n = n, d = d, sigma = 0)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 21)
+    
             
             for n_frac in n_fracs:
                 if n_frac == 1.0: # sklearn can't split when trainset frac = 1.0
@@ -160,7 +160,8 @@ if __name__ == "__main__":
     N = [args.n]
     D = [args.d]
     
-    lambds = [0.01, 0.1, 0.5, 1, 3, 5, 7, 10, 15, 20, 25, 50, 75, 100, 125, 150, 175, 200, 300, 400, 500, 1000]
+    # lambds = [0.01, 0.1, 0.5, 1, 3, 5, 7, 10, 15, 20, 25, 50, 75, 100, 125, 150, 175, 200, 300, 400, 500, 1000]
+    lambds = [50, 100]
     # new_lambs = [10000 + i for i in range(0, 41000, 1000)]
 
     n_fracs = [0.1*i for i in range(1, 11)]
