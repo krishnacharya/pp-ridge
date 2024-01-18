@@ -17,7 +17,7 @@ from src.estimator import pp_estimator, jorgensen_private_estimator, nonpriv_sol
 
 def run(N, D, lambds, n_fracs, runs=10000):
 
-    X, y = generate_linear_data(n = N, d = d, sigma = 0)
+    X, y = generate_linear_data(n = N, d = D, sigma = 0)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 21)
                 
     
