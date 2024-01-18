@@ -33,7 +33,7 @@ def run():
     # Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 1.1, 1.3, 1.5]
     # Lamb = np.arange(0, 100.5, 0.5)[1:] #0.5, ... 100
     Lamb = [0.01, 0.05, 0.1, 0.5, 1, 3, 5, 7, 10, 15, 20, 30, 40, 50, 100, 150, 200]
-    frac_of_train_dataset = np.arange(0.1, 1.1, 0.1) # fraction of training dataset used [0.1, ... 1.0]
+    frac_of_train_dataset = [1] # fraction of training dataset used [0.1, ... 1.0]
     runs = 10000
 
     list_of_results = []
@@ -80,8 +80,7 @@ def run():
             reg_jorg_avg_train_mean, reg_jorg_avg_train_std, reg_jorg_avg_test_mean, reg_jorg_avg_test_std, reg_theta_hat_jorg_avg_norm = jorgensen_private_estimator(epsilons, jorg_thresh_mean, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=lamb)
             type2_nonpriv_loss = nonpriv_solution(N_train_frac, N_test, X_tr_frac, y_tr_frac, X_test, y_test, lamb, eval_lamb=lamb)
 
-            di = {"N_train_frac": N_train_frac,
-                "lamb": lamb,
+            di = {"lamb": lamb,
                 "unreg_pp_test_mean": unreg_pp_test_mean,
                 "unreg_nonpp_test_mean": unreg_nonpp_test_mean,
                 "reg_pp_test_mean": reg_pp_test_mean,
@@ -130,12 +129,12 @@ def run():
                 "reg_theta_hat_jorg_max_norm": reg_theta_hat_jorg_max_norm,
                 "reg_theta_hat_jorg_avg_norm": reg_theta_hat_jorg_avg_norm
                 }
-            print(f"Expt {i} done, N_train {N_train_frac}, lambda {lamb}")
+            print(f"Expt {i} done, lambda {lamb}")
             list_of_results.append(di)
             i += 1
 
     df = pd.DataFrame(list_of_results)
-    df.to_csv(f'../forplots_insurance_data_impact_n_plevel_34_43_23_affine.csv', encoding='utf-8', index=False)
+    df.to_csv(f'../forplots_insurance_data_impact_lambda_plevel_34_43_23_affine.csv', encoding='utf-8', index=False)
 
 
 if __name__ == "__main__":
