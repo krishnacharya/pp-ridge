@@ -17,6 +17,10 @@ from src.estimator import pp_estimator, jorgensen_private_estimator, nonpriv_sol
 
 def run(N, D, lambds, n_fracs, runs=10000):
 
+    X, y = generate_linear_data(n = n, d = d, sigma = 0)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 21)
+                
+    
     list_of_results = []
     i = 0
     for d in D:
@@ -28,19 +32,22 @@ def run(N, D, lambds, n_fracs, runs=10000):
 
             
             for n_frac in n_fracs:
-                X, y = generate_linear_data(n = n, d = d, sigma = 0)
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 21)
-                N_train, N_test = len(X_train), len(X_test)
+                if n_frac == 1.0: # sklearn can't split when trainset frac = 1.0
+                    X_tr_frac, y_tr_frac = X_train, y_train
+                else:
+                    X_tr_frac, _ , y_tr_frac, _ = train_test_split(X_train, y_train, train_size = n_frac, random_state = 21)
+                N_train_frac, N_test = len(X_tr_frac), len(X_test)
+        
                 
-                num_train = int(n_frac*len(X_train))
-                print(len(X_train))
-                print(X_train.shape)
-                X_train, y_train = X_train[:num_train], y_train[:num_train]
-                print(len(X_train))
-                print(X_train.shape)
-                N_train = num_train
+                # num_train = int(n_frac*len(X_train))
+                # print(len(X_train))
+                # print(X_train.shape)
+                # X_train, y_train = X_train[:num_train], y_train[:num_train]
+                # print(len(X_train))
+                # print(X_train.shape)
+                # N_train = num_train
 
-                epsilons = set_epsilons(N_train, f_c=0.54, f_m=0.37, eps_c=0.01, eps_m=0.2, eps_l=1.0)
+                epsilons = set_epsilons(N_train_frac, f_c=0.34, f_m=0.43, eps_c=0.01, eps_m=0.2, eps_l=1.0)
 
                 jorg_thresh_max, jorg_thresh_mean = max(epsilons), np.mean(epsilons)
 
@@ -54,36 +61,33 @@ def run(N, D, lambds, n_fracs, runs=10000):
                     # lamb = lamb * d
 
                     # just for sanity check 
-                    _, _, unreg_pp_baseline_test_mean, unreg_pp_baseline_test_std, _ = pp_estimator(epsilons, X_train, y_train, X_test, y_test, 0, runs, eval_lamb=0, non_personalized=True)
+                    _, _, unreg_pp_baseline_test_mean, unreg_pp_baseline_test_std, _ = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, 0, runs, eval_lamb=0, non_personalized=True)
                     # just for sanity check 
                     jorg_thresh = min(epsilons)
-                    _, _, unreg_jorg_baseline_test_mean, unreg_jorg_baseline_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh, X_train, y_train, X_test, y_test, 0, runs, eval_lamb=0)
-                    _, _, jorg_baseline_test_mean, jorg_baseline_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
+                    _, _, unreg_jorg_baseline_test_mean, unreg_jorg_baseline_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh, X_tr_frac, y_tr_frac, X_test, y_test, 0, runs, eval_lamb=0)
+                    _, _, jorg_baseline_test_mean, jorg_baseline_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0)
 
 
 
                     # 4.1 Type1
-                    unreg_pp_train_mean, unreg_pp_train_std, unreg_pp_test_mean, unreg_pp_test_std, _ = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
-                    _, _, unreg_nonpp_test_mean, unreg_nonpp_test_std, _ = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0, non_personalized=True)
+                    unreg_pp_train_mean, unreg_pp_train_std, unreg_pp_test_mean, unreg_pp_test_std, unreg_theta_hat_pp_norm = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0)
+                    _, _, unreg_nonpp_test_mean, unreg_nonpp_test_std, unreg_theta_hat_nonpp_norm = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0, non_personalized=True)
                     
                     # 4.1 Type2
-                    reg_pp_train_mean, reg_pp_train_std, reg_pp_test_mean, reg_pp_test_std, _ = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb)
-                    _, _, reg_nonpp_test_mean, reg_nonpp_test_std, _ = pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb, non_personalized=True)
+                    reg_pp_train_mean, reg_pp_train_std, reg_pp_test_mean, reg_pp_test_std, reg_theta_hat_pp_norm = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=lamb)
+                    _, _, reg_nonpp_test_mean, reg_nonpp_test_std, reg_theta_hat_nonpp_norm = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=lamb, non_personalized=True)
 
                     # 4.3 Type1
-                    unreg_jorg_max_train_mean, unreg_jorg_max_train_std, unreg_jorg_max_test_mean, unreg_jorg_max_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh_max, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
-                    unreg_jorg_avg_train_mean, unreg_jorg_avg_train_std, unreg_jorg_avg_test_mean, unreg_jorg_avg_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh_mean, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0)
-                    type1_nonpriv_loss = nonpriv_solution(N_train, N_test, X_train, y_train, X_test, y_test, lamb=0, eval_lamb=0)
+                    unreg_jorg_max_train_mean, unreg_jorg_max_train_std, unreg_jorg_max_test_mean, unreg_jorg_max_test_std, unreg_theta_hat_jorg_max_norm = jorgensen_private_estimator(epsilons, jorg_thresh_max, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0)
+                    unreg_jorg_avg_train_mean, unreg_jorg_avg_train_std, unreg_jorg_avg_test_mean, unreg_jorg_avg_test_std, unreg_theta_hat_jorg_avg_norm = jorgensen_private_estimator(epsilons, jorg_thresh_mean, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0)
+                    type1_nonpriv_loss = nonpriv_solution(N_train_frac, N_test, X_tr_frac, y_tr_frac, X_test, y_test, lamb=0, eval_lamb=0)
 
                     # 4.3 Type2
-                    reg_jorg_max_train_mean, reg_jorg_max_train_std, reg_jorg_max_test_mean, reg_jorg_max_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh_max, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb)
-                    reg_jorg_avg_train_mean, reg_jorg_avg_train_std, reg_jorg_avg_test_mean, reg_jorg_avg_test_std, _ = jorgensen_private_estimator(epsilons, jorg_thresh_mean, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb)
-                    type2_nonpriv_loss = nonpriv_solution(N_train, N_test, X_train, y_train, X_test, y_test, lamb, eval_lamb=lamb)
-                    
-                    
-                    di = {"d": d,
-                        "n": n,
-                        "n_frac": n_frac,
+                    reg_jorg_max_train_mean, reg_jorg_max_train_std, reg_jorg_max_test_mean, reg_jorg_max_test_std, reg_theta_hat_jorg_max_norm = jorgensen_private_estimator(epsilons, jorg_thresh_max, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=lamb)
+                    reg_jorg_avg_train_mean, reg_jorg_avg_train_std, reg_jorg_avg_test_mean, reg_jorg_avg_test_std, reg_theta_hat_jorg_avg_norm = jorgensen_private_estimator(epsilons, jorg_thresh_mean, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=lamb)
+                    type2_nonpriv_loss = nonpriv_solution(N_train_frac, N_test, X_tr_frac, y_tr_frac, X_test, y_test, lamb, eval_lamb=lamb)
+
+                    di = {"N_train_frac": N_train_frac,
                         "lamb": lamb,
                         "unreg_pp_test_mean": unreg_pp_test_mean,
                         "unreg_nonpp_test_mean": unreg_nonpp_test_mean,
@@ -123,13 +127,18 @@ def run(N, D, lambds, n_fracs, runs=10000):
                         "unreg_pp_baseline_test_std": unreg_pp_baseline_test_std,
                         "unreg_jorg_baseline_test_std": unreg_jorg_baseline_test_std,
                         "jorg_baseline_test_std": jorg_baseline_test_std,
+                        #######
+                        "unreg_theta_hat_pp_norm": unreg_theta_hat_pp_norm,
+                        "unreg_theta_hat_nonpp_norm": unreg_theta_hat_nonpp_norm,
+                        "reg_theta_hat_pp_norm": reg_theta_hat_pp_norm,
+                        "reg_theta_hat_pp_norm": reg_theta_hat_nonpp_norm,
+                        "unreg_theta_hat_jorg_max_norm": unreg_theta_hat_jorg_max_norm,
+                        "unreg_theta_hat_jorg_avg_norm": unreg_theta_hat_jorg_avg_norm,
+                        "reg_theta_hat_jorg_max_norm": reg_theta_hat_jorg_max_norm,
+                        "reg_theta_hat_jorg_avg_norm": reg_theta_hat_jorg_avg_norm
                         }
-                    
-                    print(f"Expt {i} done, lambda {lamb}, n_frac {n_frac}")
+                    print(f"Expt {i} done, N_train {N_train_frac}, lambda {lamb}")
                     list_of_results.append(di)
-
-                    # if (lamb >= 1e10) or (abs(check_pp_test_vals[c]-check_jorg_test_vals[c])<=0.01):
-                    #     break
                     i += 1
 
             
