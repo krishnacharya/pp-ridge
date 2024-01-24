@@ -56,8 +56,6 @@ for d in D:
                     p += 1
                     if Lamb[c]*2 not in Lamb:
                         Lamb.insert(c+1, Lamb[c]*2)
-            
-
             di = {"d": d,
                 "n": n,
                 "lamb": lamb,

@@ -137,7 +137,7 @@ def run():
             i += 1
 
     df = pd.DataFrame(list_of_results)
-    df.to_csv(f'../forplots_insurance_data_impact_n_plevel_54_37_9_affine.csv', encoding='utf-8', index=False)
+    df.to_csv(f'../../../csv_outputs/forplots_insurance_data_impact_n_plevel_54_37_9_affine.csv', encoding='utf-8', index=False)
 
 if __name__ == "__main__":
 

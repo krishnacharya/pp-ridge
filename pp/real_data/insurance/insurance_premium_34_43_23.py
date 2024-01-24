@@ -63,4 +63,4 @@ for f in frac_of_train_dataset: # varying the number of trianing data points use
         list_of_results.append(di)
         i += 1
 df = pd.DataFrame(list_of_results)
-df.to_csv('../insurance_data_plevel344323_affine_lambdasbig.csv', encoding='utf-8', index=False)
+df.to_csv('../../csv_outputs/insurance_data_plevel344323_affine_lambdasbig.csv', encoding='utf-8', index=False)

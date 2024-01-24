@@ -134,7 +134,7 @@ def run(lambds, epsc, epsm, runs=10000):
                     i += 1
 
     df = pd.DataFrame(list_of_results)
-    df.to_csv(f'../../forplots_insurance_data_impact_epsc_epsm_affine.csv', encoding='utf-8', index=False)
+    df.to_csv(f'../../../csv_outputs/forplots_insurance_data_impact_epsc_epsm_affine.csv', encoding='utf-8', index=False)
 
 
 if __name__ == "__main__":

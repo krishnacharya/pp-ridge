@@ -37,15 +37,6 @@ def run(N, D, lambds, n_fracs, runs=10000):
                 else:
                     X_tr_frac, _ , y_tr_frac, _ = train_test_split(X_train, y_train, train_size = n_frac, random_state = 21)
                 N_train_frac, N_test = len(X_tr_frac), len(X_test)
-        
-                
-                # num_train = int(n_frac*len(X_train))
-                # print(len(X_train))
-                # print(X_train.shape)
-                # X_train, y_train = X_train[:num_train], y_train[:num_train]
-                # print(len(X_train))
-                # print(X_train.shape)
-                # N_train = num_train
 
                 epsilons = set_epsilons(N_train_frac, f_c=0.34, f_m=0.43, eps_c=0.01, eps_m=0.2, eps_l=1.0)
 
@@ -55,10 +46,6 @@ def run(N, D, lambds, n_fracs, runs=10000):
                 print(f"d: {d}, n: {n}")
 
                 for lamb in Lamb:
-                    # if lamb >= 1000:
-                    #     break 
-                    
-                    # lamb = lamb * d
 
                     # just for sanity check 
                     _, _, unreg_pp_baseline_test_mean, unreg_pp_baseline_test_std, _ = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, 0, runs, eval_lamb=0, non_personalized=True)
