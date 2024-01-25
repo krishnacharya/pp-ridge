@@ -9,7 +9,7 @@ The increased application of machine learning (ML) in sensitive domains requires
 File Structure --
 
 The `pp/synthetic_expt` and the `pp/real_data/insurance` contain the experiment results from the synthetic and the real dataset respectively.
-Each of these folder contains `impact_lambda`, `impact_epsc_epsm`, `impact_fc`, `impact_n` folders which represent the experiments by changing parameters such as lambda ($$\lambda$$), epsilon_c ($$\epsilon_c$$) and epsilon_m ($$\epsilon_m$$), fraction of conservatives ($$f_c$$) and fraction of training samples ($$n$$) respectively.
+Each of these folder contains `impact_lambda`, `impact_epsc_epsm`, `impact_fc`, `impact_n` folders which represent the experiments by changing parameters such as lambda ($\lambda$), epsilon_c ($\epsilon_c$) and epsilon_m ($\epsilon_m$), fraction of conservatives ($f_c$) and fraction of training samples ($n$) respectively.
 
 
 ```bash
