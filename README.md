@@ -1,11 +1,15 @@
 # pp-ridge
 Personalized Privacy for Ridge Regression
 
-Abstract
+Abstract --
 
-`
+
 The increased application of machine learning (ML) in sensitive domains requires protecting the training data through privacy frameworks, such as differential privacy (DP). DP requires to specify a uniform privacy level ε that expresses the maximum privacy loss that each data point in the entire dataset is willing to tolerate. Yet, in practice, different data points often have different privacy requirements. Having to set one uniform privacy level is usually too restrictive, often forcing a learner to guarantee the stringent privacy requirement, at a large cost to accuracy. To overcome this limitation, we introduce our novel PersonalizedDP Output Perturbation method (PDP-OP) that enables to train Ridge regression models with individual per data point privacy levels. We provide rigorous privacy proofs for our PDP-OP as well as accuracy guarantees for the resulting model. This work is the first to provide such theoretical accuracy guarantees when it comes to personalized DP in machine learning, whereas previous work only provided empirical evaluations. We empirically evaluate PDP-OP on synthetic and real datasets and with diverse privacy distributions. We show that by enabling each data point to specify their own privacy requirement, we can significantly improve the privacy-accuracy trade-offs in DP. We also show that PDP-OP outperforms the personalized privacy techniques of Jorgensen et al. (2015).
-`
+
+File Structure --
+
+The `pp/synthetic_expt` and the `pp/real_data/insurance` contain the experiment results from the synthetic and the real dataset respectively.
+Each of these folder contains `impact_lambda`, `impact_epsc_epsm`, `impact_fc`, `impact_n` folders which represent the experiments by changing parameters such as lambda ($$\lambda$$), epsilon_c ($$\epsilon_c$$) and epsilon_m ($$\epsilon_m$$), fraction of conservatives ($$f_c$$) and fraction of training samples ($$n$$) respectively.
 
 
 ```bash
@@ -106,7 +110,7 @@ pp
    |   |   |-- forplots_california_housing_data_impact_n_plevel_54_37_9.sh
    |   |   |-- forplots_california_housing_data_impact_n_plevel_54_37_9.submit
    |   |-- insurance
-   |   |   |-- impact_eps_epsm
+   |   |   |-- impact_epsc_epsm
    |   |   |   |-- forplots_insurance_data_impact_epsc_epsm_plevel_34_43_23.py
    |   |   |-- impact_fc
    |   |   |   |-- forplots_insurance_data_impact_fc_plevel_34_43_23.py
@@ -132,13 +136,14 @@ pp
    |   |   |-- forplots_specific_30_100_eps_c_eps_m_CHECK.csv
    |   |   |-- forplots_specific_30_100_impact_fc.csv
    |   |   |-- forplots_specific_30_100_impact_n.csv
-   |   |-- forplots_specific_d_n_plevel_34_43_23.py
-   |   |-- forplots_specific_d_n_plevel_54_37_9.py
    |   |-- impact_epsc_epsm
    |   |   |-- CHECK.py
    |   |   |-- forplots_specific_d_n_epsc_epsm.py
    |   |-- impact_fc
    |   |   |-- forplots_specific_d_n_impact_fc.py
+   |   |-- impact_lambda
+   |   |   |-- forplots_specific_d_n_plevel_34_43_23.py
+   |   |   |-- forplots_specific_d_n_plevel_54_37_9.py
    |   |-- impact_n
    |   |   |-- forplots_specific_d_n_impact_n.py
    |   |-- run_plevel_34_43_23.py
