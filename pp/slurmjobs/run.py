@@ -27,22 +27,37 @@ def run_linear_synth(N:int, d:int, sigma:float, runs:int, ttsplit: float, lamb:f
     '''
     np.random.seed(seed = seed) # set seed for data generation below, and for sklearn randomness in test train split
     X, y = generate_linear_data(n = N, d = d, sigma = sigma) # generate data once use multiple times over the runs
+    # TODO get generating thetastar for the above, also ytest**2 value is easy to get
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = ttsplit, random_state = seed)
     
     X_tr_frac, y_tr_frac = split_training_data(X_tr = X_train, y_tr = y_train, f = frac_train, seed = seed)
     N_train_frac, N_test = len(X_tr_frac), len(X_test)
     epsilons = set_epsilons(N_train_frac, f_c=f_c, f_m=f_m, eps_c=eps_c, eps_m=eps_m, eps_l=eps_l)
 
-    jorg_thresh_max, jorg_thresh_mean = np.max(epsilons), np.mean(epsilons)
+    jorg_thresh_max, jorg_thresh_avg = np.max(epsilons), np.mean(epsilons)
 
-    # Type 1/Unregularized test loss for 1) our algorithm, 2) standard DP, 3,4) Jorgensen (mean and max thresh)
-    unreg_pp_train_mean, unreg_pp_train_std, unreg_pp_test_mean, unreg_pp_test_std, \
-    unreg_theta_hat_pp_norm,  = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0) # Our algorithm
-    _, _, unreg_nonpp_test_mean, \
-    unreg_nonpp_test_std, unreg_theta_hat_nonpp_norm = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0, non_personalized=True)    
+    # Type 1/Unregularized test loss for 1) our algorithm, 2) standard DP, 3,4) Jorgensen (max and avg thresh)
+    type1_nonpriv_loss = nonpriv_solution(N_train_frac, N_test, X_tr_frac, y_tr_frac, X_test, y_test, lamb=0, eval_lamb=0) # test loss of the non private training data solution, equal weighted, no regularization
 
-    # Type 2/ Regularized test loss for  1) our algorithm, 2) standard DP, 3,4) Jorgensen (mean and max thresh)
+    # Our algorithm
+    t1_oa_train_mean, t1_oa_train_std, t1_oa_test_mean, t1_oa_test_std, t1_thetahat_oa_mean, t1_thetahat_oa_std, \
+    t1_thetadiff_oa_mean, t1_thetadiff_oa_std  = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0) 
+    
+    # Standard DP
+    t1_sdp_train_mean, t1_sdp_train_std, t1_sdp_test_mean, t1_sdp_test_std, t1_thetahat_sdp_mean, t1_thetahat_sdp_std, \
+    t1_thetadiff_sdp_mean, t1_thetadiff_sdp_std  = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0, non_personalized=True)
 
+    # Jorgmensen with max and average epsilon threshold 
+    t1_jorgmax_train_mean, t1_jorgmax_train_std, t1_jorgmax_test_mean, t1_jorgmax_test_std, t1_thetahat_jorgmax_mean, t1_thetahat_jorgmax_std \
+    t1_thetadiff_jorgmax_mean, t1_thetadiff_jorgmax_std = jorgensen_private_estimator(epsilons, jorg_thresh_max, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0)
+    
+    t1_jorgavg_train_mean, t1_jorgavg_train_std, t1_jorgavg_test_mean, t1_jorgavg_test_std, t1_thetahat_jorgavg_mean, t1_thetahat_jorgavg_std \
+    t1_thetadiff_jorgavg_mean, t1_thetadiff_jorgavg_std = jorgensen_private_estimator(epsilons, jorg_thresh_avg, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0)
+
+    #TODO save these variables in a dictionary then to a dataframe and save
+
+    # Type 2/ Regularized test loss for  1) our algorithm, 2) standard DP, 3,4) Jorgensen (max and avg thresh)
+    # TODO
 
 def run_exp(X_train, y_train, frac_trainset:float, lamb:float, \
             f_c : float, f_m : float, eps_c : float, eps_m : float, eps_l=1.0, seed = 21):
