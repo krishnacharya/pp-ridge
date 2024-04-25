@@ -1,4 +1,5 @@
 from sklearn.preprocessing import normalize, MinMaxScaler
+from sklearn.model_selection import train_test_split
 import numpy as np
 
 def weighted_rls_solution(weights:np.ndarray, X: np.ndarray, y:np.ndarray, lamb:float = 1.0) -> np.ndarray:
@@ -81,6 +82,7 @@ def generate_linear_data(n:int, d:int, sigma:float):
     returns
       X the design matrix shape is (n x d) each element in the matrix is in [0, 1]
       y the associated labels shape is (n,) each y is in [-1, 1]
+      theta is randomly generated on the surface of the sphere, 
   '''
   X = np.random.rand(n, d) # entries uniform in [0,1), thus each row ||x_i|| bounded by \sqrt{d}
   theta = np.random.normal(0, 1, d) # d iid Gaussian each entry N(0, 1)
@@ -149,3 +151,13 @@ def set_epsilons(N_train : int, f_c : float, f_m : float, eps_c : float, eps_m :
   m = np.random.uniform(eps_m, eps_l, size = N_medium)
   h = np.array([eps_l] * N_high)
   return np.concatenate((c, m, h), axis=None)
+
+def split_training_data(X_tr, y_tr, f:float, seed:int):
+  '''
+    Returns a fraction f of the training data
+  '''
+  if f == 1.0:
+    return X_tr, y_tr
+  else:
+    X_tr_frac, _ , y_tr_frac, _ = train_test_split(X_tr, y_tr, train_size = f, random_state = seed)
+    return X_tr_frac, y_tr_frac

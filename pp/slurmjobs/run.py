@@ -9,6 +9,29 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 
+def run_linear_synth(N:int, d:int, sigma:float, runs:int, ttsplit: float, lamb:float, frac_train: float, \
+                    f_c:float, f_m:float, eps_c:float, eps_m:float, eps_l:float, save_dir:str, seed:int) -> None:
+    '''
+        N: synthetic dataset size
+        d: dimension of synthetic features
+        sigma: std of gaussian noise added to label
+        
+        runs: number of runs of private estimator computation on the same data
+        ttsplit: desired fraction of test set for train test split
+
+        lamb: regularization for ridgereg
+        frac_train: fraction of training set to use for private estimator
+        f_c, f_m, eps_c, eps_m, eps_l : see paper
+
+        seed: seed for numpy
+    '''
+    np.random.seed(seed = seed) # set seed for data generation below, and for sklearn randomness in test train split
+    X, y = generate_linear_data(n = N, d = d, sigma = sigma) # generate data once use multiple times over the runs
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = ttsplit, random_state = seed)
+    N_train, N_test = len(X_train), len(X_test)
+
+
+
 def run_exp(X_train, y_train, frac_trainset:float, lamb:float, \
             f_c : float, f_m : float, eps_c : float, eps_m : float, eps_l=1.0, seed = 21):
     '''
@@ -43,5 +66,3 @@ def run_exp(X_train, y_train, frac_trainset:float, lamb:float, \
     reg_jorg_avg_train_mean, reg_jorg_avg_train_std, reg_jorg_avg_test_mean, reg_jorg_avg_test_std, reg_theta_hat_jorg_avg_norm = jorgensen_private_estimator(epsilons, jorg_thresh_mean, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb)
     type2_nonpriv_loss = nonpriv_solution(N_train, N_test, X_train, y_train, X_test, y_test, lamb, eval_lamb=lamb)
     
-    
-
