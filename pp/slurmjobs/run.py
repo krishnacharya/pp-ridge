@@ -28,8 +28,20 @@ def run_linear_synth(N:int, d:int, sigma:float, runs:int, ttsplit: float, lamb:f
     np.random.seed(seed = seed) # set seed for data generation below, and for sklearn randomness in test train split
     X, y = generate_linear_data(n = N, d = d, sigma = sigma) # generate data once use multiple times over the runs
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = ttsplit, random_state = seed)
-    N_train, N_test = len(X_train), len(X_test)
+    
+    X_tr_frac, y_tr_frac = split_training_data(X_tr = X_train, y_tr = y_train, f = frac_train, seed = seed)
+    N_train_frac, N_test = len(X_tr_frac), len(X_test)
+    epsilons = set_epsilons(N_train_frac, f_c=f_c, f_m=f_m, eps_c=eps_c, eps_m=eps_m, eps_l=eps_l)
 
+    jorg_thresh_max, jorg_thresh_mean = np.max(epsilons), np.mean(epsilons)
+
+    # Type 1/Unregularized test loss for 1) our algorithm, 2) standard DP, 3,4) Jorgensen (mean and max thresh)
+    unreg_pp_train_mean, unreg_pp_train_std, unreg_pp_test_mean, unreg_pp_test_std, \
+    unreg_theta_hat_pp_norm,  = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0) # Our algorithm
+    _, _, unreg_nonpp_test_mean, \
+    unreg_nonpp_test_std, unreg_theta_hat_nonpp_norm = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0, non_personalized=True)    
+
+    # Type 2/ Regularized test loss for  1) our algorithm, 2) standard DP, 3,4) Jorgensen (mean and max thresh)
 
 
 def run_exp(X_train, y_train, frac_trainset:float, lamb:float, \

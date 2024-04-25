@@ -18,13 +18,27 @@ def nonpriv_solution(N_train, N_test, X_train, y_train, X_test, y_test, lamb, ev
 
 ## PP-ESTIMATOR
 
-def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0, non_personalized=False):
+def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0, non_personalized=False, theta_star = None):
   '''
     X_train: np.ndarray of shape (n, d)
     epsilons: must be a numpy array of shape (len(X_train),)
+    eval_lamb: is the lambda plugged into the evaluate_weighted_rls_objective
+    theta_star: the true linear generating parameter, this is by default to None for real data, and for synthetic data its a numpy array
+
+    Returns:
+      Type1(Unreg) or Type 2(Reg) loss depending on eval_lambda
+      -mean train loss
+      -std of train loss
+      -mean test loss
+      -std of test loss
+
+      -mean and std of thetahat norm 
+      -mean and std of ||thetahat - thetastar||_2 across the runs 
   '''
   N_train, d =  X_train.shape
   N_test =  len(X_test)
+  if theta_star == None:
+    theta_star = np.zeros(d)
   if non_personalized:
     epsilons = np.array([min(epsilons)]*N_train)
   tot_epsilon = np.sum(epsilons)
@@ -46,36 +60,52 @@ def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_la
   # exact_loss_ridge = []
   # weighted_erm = []
   theta_hat_pp_norm = []
+  theta_diff = [] # array with each element being L2 norm of thetahat - theta_star
 
   for _ in range(runs):
     # exact_loss_ridge.append(evaluate_weighted_rls_objective(sol_exact_ridge_pp, uniform_weight_test, X_test, y_test, eval_lamb))
     theta_hat_pp = compute_private_estimator(sol_exact_ridge_pp, eta_pp) # exact solution on weighted training + noise
     theta_hat_pp_norm.append(np.linalg.norm(theta_hat_pp))
-    unweighted_train.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_train, X_train, y_train, eval_lamb)) # evaluate with lambda = 0, don't add regularizer for evaluation!
+    theta_diff.append(np.linalg.norm(theta_hat_pp.flatten() - theta_star.flatten()))
+    unweighted_train.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_train, X_train, y_train, eval_lamb))
     unweighted_test.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_test, X_test, y_test, eval_lamb))
-  
-  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test), np.mean(theta_hat_pp_norm)
+
+  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test), \
+         np.mean(theta_hat_pp_norm), np.std(theta_hat_pp_norm), np.mean(theta_diff), np.std(theta_diff)
 
 # JORGENSEN PRIVATE ESTIMATOR
 
-def jorgensen_private_estimator(epsilons, thresh, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0):
+def jorgensen_private_estimator(epsilons, thresh, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0, theta_star = None):
   '''
     epsilons: must be a numpy array of shape (len(X_train),)
     thresh : np.mean(epsilons) OR max(epsilons) -- Acc to Jorgensen (using max as of now)
     X_train: np.ndarray of shape (n, d)
     To ensure personalized privacy Jorgensen et.al first subsample from the training data acc personalized privacy levels
     then add noise
+    theta_star: the true linear generating parameter, this is by default to None for real data, and for synthetic data its a numpy array
+
+    Returns:
+      Type1(Unreg) or Type 2(Reg) loss depending on eval_lambda
+      -mean train loss
+      -std of train loss
+      -mean test loss
+      -std of test loss
+
+      -mean and std of thetahat norm 
+      -mean and std of ||thetahat - thetastar||_2 across the runs 
   '''
   N_train, d =  X_train.shape
   N_test =  len(X_test)
-  # thresh = max(epsilons) #global threshold used in jorgensen sampling
-  # to loop the part below
+  if theta_star == None:
+    theta_star = np.zeros(d)
+  
   uniform_weight_train = np.ones(N_train) / N_train
   uniform_weight_test = np.ones(N_test) / N_test
 
   unweighted_train = []
   unweighted_test = []
   theta_hat_norm = []
+  theta_diff = [] # array with each element being L2 norm of thetahat - theta_star, we have no gurantees in Jorgensen paper on this but saving it anyway
 
   for _ in range(runs):
     mask = dataset_mask_jorgensen(epsilons, thresh) # which datapoint in X_train, y_train to mask, shape (N_train)
@@ -92,6 +122,8 @@ def jorgensen_private_estimator(epsilons, thresh, X_train, y_train, X_test, y_te
       eta = compute_eta(lamb = lamb, tot_epsilon=tot_epsilon, d = d)
     theta_hat = compute_private_estimator(theta_bar, eta)
     theta_hat_norm.append(np.linalg.norm(theta_hat))
+    theta_diff.append(np.linalg.norm(theta_hat.flatten() - theta_star.flatten()))
     unweighted_train.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_train, X_train, y_train, eval_lamb))
     unweighted_test.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_test, X_test, y_test, eval_lamb))
-  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test), np.mean(theta_hat_norm)
+  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test), \ 
+         np.mean(theta_hat_norm), np.std(theta_hat_norm), np.mean(theta_diff), np.std(theta_diff)
