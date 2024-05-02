@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 
 
 def run_linear_synth(N:int, d:int, sigma:float, runs:int, ttsplit: float, lamb:float, frac_train: float, \
-                    f_c:float, f_m:float, eps_c:float, eps_m:float, eps_l:float, save_dir:str, seed:int) -> None:
+                    f_c:float, f_m:float, eps_c:float, eps_m:float, eps_l:float, seed:int) -> dict:
     '''
         N: synthetic dataset size
         d: dimension of synthetic features
@@ -26,8 +26,7 @@ def run_linear_synth(N:int, d:int, sigma:float, runs:int, ttsplit: float, lamb:f
         seed: seed for numpy
     '''
     np.random.seed(seed = seed) # set seed for data generation below, and for sklearn randomness in test train split
-    X, y = generate_linear_data(n = N, d = d, sigma = sigma) # generate data once use multiple times over the runs
-    # TODO get generating thetastar for the above, also ytest**2 value is easy to get
+    X, y, theta_star = generate_linear_data(n = N, d = d, sigma = sigma) # generate data once use multiple times over the runs
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = ttsplit, random_state = seed)
     
     X_tr_frac, y_tr_frac = split_training_data(X_tr = X_train, y_tr = y_train, f = frac_train, seed = seed)
@@ -35,29 +34,29 @@ def run_linear_synth(N:int, d:int, sigma:float, runs:int, ttsplit: float, lamb:f
     epsilons = set_epsilons(N_train_frac, f_c=f_c, f_m=f_m, eps_c=eps_c, eps_m=eps_m, eps_l=eps_l)
 
     jorg_thresh_max, jorg_thresh_avg = np.max(epsilons), np.mean(epsilons)
-
+    di = {"N":N, "d":d, "sigma": sigma, "runs":runs, "ttsplit":ttsplit, "lamb": lamb, "frac_train":frac_train, \
+        "f_c":f_c, "f_m":f_m, "eps_c":eps_c, "eps_m":eps_m, "eps_l":eps_l} # just the values for this experiment
     # Type 1/Unregularized test loss for 1) our algorithm, 2) standard DP, 3,4) Jorgensen (max and avg thresh)
-    type1_nonpriv_loss = nonpriv_solution(N_train_frac, N_test, X_tr_frac, y_tr_frac, X_test, y_test, lamb=0, eval_lamb=0) # test loss of the non private training data solution, equal weighted, no regularization
+    di['type1_nonpriv_loss'] = nonpriv_solution(N_train_frac, N_test, X_tr_frac, y_tr_frac, X_test, y_test, lamb=0, eval_lamb=0) # test loss of the non private training data solution, equal weighted, no regularization
 
     # Our algorithm
-    t1_oa_train_mean, t1_oa_train_std, t1_oa_test_mean, t1_oa_test_std, t1_thetahat_oa_mean, t1_thetahat_oa_std, \
-    t1_thetadiff_oa_mean, t1_thetadiff_oa_std  = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0) 
+    di['t1_oa_train_mean'], di['t1_oa_train_std'], di['t1_oa_test_mean'], di['t1_oa_test_std'], di['t1_thetahat_oa_mean'], di['t1_thetahat_oa_std'], \
+    di['t1_thetadiff_oa_mean'], di['t1_thetadiff_oa_std']  = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0, theta_star=theta_star) 
     
     # Standard DP
-    t1_sdp_train_mean, t1_sdp_train_std, t1_sdp_test_mean, t1_sdp_test_std, t1_thetahat_sdp_mean, t1_thetahat_sdp_std, \
-    t1_thetadiff_sdp_mean, t1_thetadiff_sdp_std  = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0, non_personalized=True)
+    di['t1_sdp_train_mean'], di['t1_sdp_train_std'], di['t1_sdp_test_mean'], di['t1_sdp_test_std'], di['t1_thetahat_sdp_mean'], di['t1_thetahat_sdp_std'], \
+    di['t1_thetadiff_sdp_mean'], di['t1_thetadiff_sdp_std']  = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0, non_personalized=True, theta_star=theta_star)
 
     # Jorgmensen with max and average epsilon threshold 
-    t1_jorgmax_train_mean, t1_jorgmax_train_std, t1_jorgmax_test_mean, t1_jorgmax_test_std, t1_thetahat_jorgmax_mean, t1_thetahat_jorgmax_std \
-    t1_thetadiff_jorgmax_mean, t1_thetadiff_jorgmax_std = jorgensen_private_estimator(epsilons, jorg_thresh_max, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0)
+    di['t1_jorgmax_train_mean'], di['t1_jorgmax_train_std'], di['t1_jorgmax_test_mean'], di['t1_jorgmax_test_std'], di['t1_thetahat_jorgmax_mean'], di['t1_thetahat_jorgmax_std'], \
+    di['t1_thetadiff_jorgmax_mean'], di['t1_thetadiff_jorgmax_std'] = jorgensen_private_estimator(epsilons, jorg_thresh_max, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0, theta_star=theta_star)
     
-    t1_jorgavg_train_mean, t1_jorgavg_train_std, t1_jorgavg_test_mean, t1_jorgavg_test_std, t1_thetahat_jorgavg_mean, t1_thetahat_jorgavg_std \
-    t1_thetadiff_jorgavg_mean, t1_thetadiff_jorgavg_std = jorgensen_private_estimator(epsilons, jorg_thresh_avg, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0)
-
-    #TODO save these variables in a dictionary then to a dataframe and save
-
+    di['t1_jorgavg_train_mean'], di['t1_jorgavg_train_std'], di['t1_jorgavg_test_mean'], di['t1_jorgavg_test_std'], di['t1_thetahat_jorgavg_mean'], di['t1_thetahat_jorgavg_std'], \
+    di['t1_thetadiff_jorgavg_mean'], di['t1_thetadiff_jorgavg_std'] = jorgensen_private_estimator(epsilons, jorg_thresh_avg, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0, theta_star=theta_star)
+  
     # Type 2/ Regularized test loss for  1) our algorithm, 2) standard DP, 3,4) Jorgensen (max and avg thresh)
     # TODO
+    return di
 
 def run_exp(X_train, y_train, frac_trainset:float, lamb:float, \
             f_c : float, f_m : float, eps_c : float, eps_m : float, eps_l=1.0, seed = 21):
@@ -93,3 +92,4 @@ def run_exp(X_train, y_train, frac_trainset:float, lamb:float, \
     reg_jorg_avg_train_mean, reg_jorg_avg_train_std, reg_jorg_avg_test_mean, reg_jorg_avg_test_std, reg_theta_hat_jorg_avg_norm = jorgensen_private_estimator(epsilons, jorg_thresh_mean, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=lamb)
     type2_nonpriv_loss = nonpriv_solution(N_train, N_test, X_train, y_train, X_test, y_test, lamb, eval_lamb=lamb)
     
+    pass

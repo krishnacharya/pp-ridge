@@ -13,8 +13,6 @@ sys.path.append('../')
 from src.utils import generate_linear_data, set_epsilons
 from src.estimator import pp_estimator, jorgensen_private_estimator, nonpriv_solution
 
-# Lamb = [0.01, 0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 1.1, 1.3, 1.5]
-
 def run(N, D, lambds, runs=10000):
 
     list_of_results = []

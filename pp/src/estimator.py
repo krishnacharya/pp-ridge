@@ -37,7 +37,7 @@ def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_la
   '''
   N_train, d =  X_train.shape
   N_test =  len(X_test)
-  if theta_star == None:
+  if theta_star is None:
     theta_star = np.zeros(d)
   if non_personalized:
     epsilons = np.array([min(epsilons)]*N_train)
@@ -70,7 +70,7 @@ def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_la
     unweighted_train.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_train, X_train, y_train, eval_lamb))
     unweighted_test.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_test, X_test, y_test, eval_lamb))
 
-  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test), \
+  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test),\
          np.mean(theta_hat_pp_norm), np.std(theta_hat_pp_norm), np.mean(theta_diff), np.std(theta_diff)
 
 # JORGENSEN PRIVATE ESTIMATOR
@@ -96,7 +96,7 @@ def jorgensen_private_estimator(epsilons, thresh, X_train, y_train, X_test, y_te
   '''
   N_train, d =  X_train.shape
   N_test =  len(X_test)
-  if theta_star == None:
+  if theta_star is None:
     theta_star = np.zeros(d)
   
   uniform_weight_train = np.ones(N_train) / N_train
@@ -125,5 +125,5 @@ def jorgensen_private_estimator(epsilons, thresh, X_train, y_train, X_test, y_te
     theta_diff.append(np.linalg.norm(theta_hat.flatten() - theta_star.flatten()))
     unweighted_train.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_train, X_train, y_train, eval_lamb))
     unweighted_test.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_test, X_test, y_test, eval_lamb))
-  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test), \ 
-         np.mean(theta_hat_norm), np.std(theta_hat_norm), np.mean(theta_diff), np.std(theta_diff)
+  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test), \
+  np.mean(theta_hat_norm), np.std(theta_hat_norm), np.mean(theta_diff), np.std(theta_diff)

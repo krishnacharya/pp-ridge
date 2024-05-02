@@ -79,7 +79,7 @@ def generate_linear_data(n:int, d:int, sigma:float):
       n: number of datapoints
       d: dimension of feature
       sigma: std for gaussian noise for the synthetic linear data
-    returns
+    returns 3 variables
       X the design matrix shape is (n x d) each element in the matrix is in [0, 1]
       y the associated labels shape is (n,) each y is in [-1, 1]
       theta is randomly generated on the surface of the sphere, 
@@ -88,7 +88,7 @@ def generate_linear_data(n:int, d:int, sigma:float):
   theta = np.random.normal(0, 1, d) # d iid Gaussian each entry N(0, 1)
   theta = theta / np.linalg.norm(theta) # theta is uniformly distributed on the surface of unit sphere, shape (d,)
   y = (X @ theta) / d**0.5 + np.random.normal(0, sigma, size=n) # so essentially the learner is trying to recover \theta / d**0.5
-  return X, y #return actual theta = theta/sqrt{d}, return that too
+  return X, y, theta #return actual theta = theta/sqrt{d}, return that too
 
 def dataset_mask_jorgensen(epsilons:np.ndarray, thresh:float) -> np.ndarray:
     '''
