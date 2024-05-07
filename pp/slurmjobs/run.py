@@ -56,6 +56,29 @@ def run_linear_synth(N:int, d:int, sigma:float, runs:int, ttsplit: float, lamb:f
   
     # Type 2/ Regularized test loss for  1) our algorithm, 2) standard DP, 3,4) Jorgensen (max and avg thresh)
     # TODO
+
+    # Type 2
+    # Our algorithm
+    di['t2_oa_train_mean'], di['t2_oa_train_std'], di['t2_oa_test_mean'], di['t2_oa_test_std'], \
+    di['t2_thetahat_oa_mean'], di['t2_thetahat_oa_std'], \
+    di['t2_thetadiff_oa_mean'], di['t2_thetadiff_oa_std'] = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=lamb, theta_star=theta_star)
+
+
+     # Standard DP
+    di['t2_sdp_train_mean'], di['t2_sdp_train_std'], di['t2_sdp_test_mean'], di['t2_sdp_test_std'], \
+    di['t2_thetahat_sdp_mean'], di['t2_thetahat_sdp_std'], \
+    di['t2_thetadiff_sdp_mean'], di['t2_thetadiff_sdp_std']  = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=lamb, non_personalized=True, theta_star=theta_star)
+
+    # Jorgensen with max epsilon threshold 
+    di['t2_jorgmax_train_mean'], di['t2_jorgmax_train_std'], di['t2_jorgmax_test_mean'], di['t2_jorgmax_test_std'], \
+    di['t2_thetahat_jorgmax_mean'], di['t2_thetahat_jorgmax_std'], \
+    di['t2_thetadiff_jorgmax_mean'], di['t2_thetadiff_jorgmax_std'] = jorgensen_private_estimator(epsilons, jorg_thresh_max, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=lamb, theta_star=theta_star)
+    
+    # Jorgensen with average epsilon threshold 
+    di['t2_jorgavg_train_mean'], di['t2_jorgavg_train_std'], di['t2_jorgavg_test_mean'], di['t2_jorgavg_test_std'], \
+    di['t2_thetahat_jorgavg_mean'], di['t2_thetahat_jorgavg_std'], \
+    di['t2_thetadiff_jorgavg_mean'], di['t2_thetadiff_jorgavg_std'] = jorgensen_private_estimator(epsilons, jorg_thresh_avg, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=lamb, theta_star=theta_star)
+
     return di
 
 def run_exp(X_train, y_train, frac_trainset:float, lamb:float, \
@@ -70,7 +93,7 @@ def run_exp(X_train, y_train, frac_trainset:float, lamb:float, \
         X_tr_frac, _ , y_tr_frac, _ = train_test_split(X_train, y_train, train_size = frac_trainset, random_state = seed)
     
     N_train_frac = len(X_tr_frac)
-    epsilons = set_epsilons(N_train_frac, f_c = fc, f_m = f_m, eps_c = eps_c, eps_m = eps_m, eps_l = eps_l)
+    epsilons = set_epsilons(N_train_frac, f_c = f_c, f_m = f_m, eps_c = eps_c, eps_m = eps_m, eps_l = eps_l)
     jorg_thresh_max, jorg_thresh_mean = max(epsilons), np.mean(epsilons)
     # TODO change
 
