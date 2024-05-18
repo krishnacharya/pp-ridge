@@ -30,4 +30,4 @@ with tqdm(total = tot) as pbar:
         pbar.update(1)
 
 df = pd.DataFrame(res)
-df.to_pickle('lambda-var-Rocketresults-nm2')
+df.to_pickle('lambda-var-synth.pkl')
