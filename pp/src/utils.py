@@ -88,7 +88,7 @@ def generate_linear_data(n:int, d:int, sigma:float):
   theta = np.random.normal(0, 1, d) # d iid Gaussian each entry N(0, 1)
   theta = theta / np.linalg.norm(theta) # theta is uniformly distributed on the surface of unit sphere, shape (d,)
   y = (X @ theta) / d**0.5 + np.random.normal(0, sigma, size=n) # so essentially the learner is trying to recover \theta / d**0.5
-  return X, y, theta #return actual theta = theta/sqrt{d}, return that too
+  return X, y, theta / d**0.5
 
 def dataset_mask_jorgensen(epsilons:np.ndarray, thresh:float) -> np.ndarray:
     '''
