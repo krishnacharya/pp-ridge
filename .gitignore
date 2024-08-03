@@ -2,3 +2,4 @@
 *.DS_Store
 *.pkl
 *.ipynb_checkpoints
+*.pyc

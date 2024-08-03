@@ -10,11 +10,13 @@ from sklearn.model_selection import train_test_split
 
 
 def run_real_data(runs:int, ttsplit: float, lamb:float, frac_train: float, \
-                    f_c:float, f_m:float, eps_c:float, eps_m:float, eps_l:float, seed:int):
+                    f_c:float, f_m:float, eps_c:float, eps_m:float, eps_l:float, seed:int, dataset:str = "insurance.csv"):
 
     np.random.seed(seed = seed) # set seed for data generation below, and for sklearn randomness in test train split
-    # Preprocessing
-    df_medical = pd.read_csv('../../datasets/insurance.csv')
+    
+    ## 
+    # Preprocessing refactored
+    df_medical = pd.read_csv('../../datasets/processed/insurance.csv')
     numeric_all = ['age', 'bmi', 'children', 'charges']
     cat_all = ['sex', 'smoker', 'region']
     df_medical_mm = numeric_scaler(df_medical, numeric_all) # minmax scaling for all numeric columns, so all elements in [0,1]
@@ -26,6 +28,7 @@ def run_real_data(runs:int, ttsplit: float, lamb:float, frac_train: float, \
     X['intercept'] = 1.0
     X = X.to_numpy() # now (n, d+1) dimensional, linear regression in d+1 is affine in d
     y = df_medical_mm_oh['charges'].to_numpy()
+    ## 
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = ttsplit, random_state = seed)
 
