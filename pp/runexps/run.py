@@ -118,7 +118,7 @@ def run_linear_synth(N:int, d:int, sigma:float, runs:int, ttsplit: float, lamb:f
     di['t1_oa_train_mean'], di['t1_oa_train_std'], di['t1_oa_test_mean'], di['t1_oa_test_std'], di['t1_thetahat_oa_mean'], di['t1_thetahat_oa_std'], \
     di['t1_thetadiff_oa_mean'], di['t1_thetadiff_oa_std']  = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0, theta_star=theta_star) 
     
-    # Standard DP
+    # Standard DP/Non personalized
     di['t1_sdp_train_mean'], di['t1_sdp_train_std'], di['t1_sdp_test_mean'], di['t1_sdp_test_std'], di['t1_thetahat_sdp_mean'], di['t1_thetahat_sdp_std'], \
     di['t1_thetadiff_sdp_mean'], di['t1_thetadiff_sdp_std']  = pp_estimator(epsilons, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0, non_personalized=True, theta_star=theta_star)
 
@@ -130,9 +130,6 @@ def run_linear_synth(N:int, d:int, sigma:float, runs:int, ttsplit: float, lamb:f
     di['t1_thetadiff_jorgavg_mean'], di['t1_thetadiff_jorgavg_std'] = jorgensen_private_estimator(epsilons, jorg_thresh_avg, X_tr_frac, y_tr_frac, X_test, y_test, lamb, runs, eval_lamb=0, theta_star=theta_star)
   
     # Type 2/ Regularized test loss for  1) our algorithm, 2) standard DP, 3,4) Jorgensen (max and avg thresh)
-    # TODO
-
-    # Type 2
     # Our algorithm
     di['t2_oa_train_mean'], di['t2_oa_train_std'], di['t2_oa_test_mean'], di['t2_oa_test_std'], \
     di['t2_thetahat_oa_mean'], di['t2_thetahat_oa_std'], \

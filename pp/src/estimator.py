@@ -15,10 +15,25 @@ def nonpriv_solution(N_train, N_test, X_train, y_train, X_test, y_test, lamb, ev
 
   return exact_loss_ridge
 
+## MAX GROUP provides PDP<, MAX EPS is just a hypothetical, doesnt provide PDP
+def maxgroup_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0, theta_star = None) -> list:
+  '''
+      use only those datapoints with max_eps requirement, "max group method", provides PDP to all datapoints
+  '''
+  max_eps = max(epsilons)
+  new_epsilons = (epsilons >= max_eps) * epsilons
+  return pp_estimator(new_epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb = eval_lamb, non_personalized=False, theta_star = theta_star)
+
+def maxeps_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0, theta_star = None) -> list:
+  '''
+    This is providing max_eps to each datapoint, doesnt provide PDP! just a bound with lowest possible noise
+  '''
+  epsilons = np.ones_like(epsilons) * max(epsilons) # all epsilons set to eps high
+  return pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb = eval_lamb, non_personalized=False, theta_star = theta_star)
 
 ## PP-ESTIMATOR
 
-def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0, non_personalized=False, theta_star = None):
+def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0, non_personalized=False, theta_star = None) -> list:
   '''
     X_train: np.ndarray of shape (n, d)
     epsilons: must be a numpy array of shape (len(X_train),)
@@ -26,6 +41,7 @@ def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_la
     theta_star: the true linear generating parameter, this is by default to None for real data, and for synthetic data its a numpy array
 
     Returns:
+    list containing
       Type1(Unreg) or Type 2(Reg) loss depending on eval_lambda
       -mean train loss
       -std of train loss
@@ -70,12 +86,12 @@ def pp_estimator(epsilons, X_train, y_train, X_test, y_test, lamb, runs, eval_la
     unweighted_train.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_train, X_train, y_train, eval_lamb))
     unweighted_test.append(evaluate_weighted_rls_objective(theta_hat_pp, uniform_weight_test, X_test, y_test, eval_lamb))
 
-  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test),\
-         np.mean(theta_hat_pp_norm), np.std(theta_hat_pp_norm), np.mean(theta_diff), np.std(theta_diff)
+  return [np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test),\
+         np.mean(theta_hat_pp_norm), np.std(theta_hat_pp_norm), np.mean(theta_diff), np.std(theta_diff)]
 
 # JORGENSEN PRIVATE ESTIMATOR
 
-def jorgensen_private_estimator(epsilons, thresh, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0, theta_star = None):
+def jorgensen_private_estimator(epsilons, thresh, X_train, y_train, X_test, y_test, lamb, runs, eval_lamb=0, theta_star = None) -> list:
   '''
     epsilons: must be a numpy array of shape (len(X_train),)
     thresh : np.mean(epsilons) OR max(epsilons) -- Acc to Jorgensen (using max as of now)
@@ -85,6 +101,7 @@ def jorgensen_private_estimator(epsilons, thresh, X_train, y_train, X_test, y_te
     theta_star: the true linear generating parameter, this is by default to None for real data, and for synthetic data its a numpy array
 
     Returns:
+      list containing
       Type1(Unreg) or Type 2(Reg) loss depending on eval_lambda
       -mean train loss
       -std of train loss
@@ -125,5 +142,5 @@ def jorgensen_private_estimator(epsilons, thresh, X_train, y_train, X_test, y_te
     theta_diff.append(np.linalg.norm(theta_hat.flatten() - theta_star.flatten()))
     unweighted_train.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_train, X_train, y_train, eval_lamb))
     unweighted_test.append(evaluate_weighted_rls_objective(theta_hat, uniform_weight_test, X_test, y_test, eval_lamb))
-  return np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test), \
-  np.mean(theta_hat_norm), np.std(theta_hat_norm), np.mean(theta_diff), np.std(theta_diff)
+  return [np.mean(unweighted_train), np.std(unweighted_train), np.mean(unweighted_test), np.std(unweighted_test), \
+  np.mean(theta_hat_norm), np.std(theta_hat_norm), np.mean(theta_diff), np.std(theta_diff)]
