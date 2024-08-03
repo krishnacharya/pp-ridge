@@ -1,5 +1,3 @@
-import sys
-sys.path.append('../')
 
 from src.preprocessing import *
 from src.utils import *
@@ -14,21 +12,21 @@ def run_real_data(runs:int, ttsplit: float, lamb:float, frac_train: float, \
 
     np.random.seed(seed = seed) # set seed for data generation below, and for sklearn randomness in test train split
     
-    ## 
     # Preprocessing refactored
-    df_medical = pd.read_csv('../../datasets/processed/insurance.csv')
-    numeric_all = ['age', 'bmi', 'children', 'charges']
-    cat_all = ['sex', 'smoker', 'region']
-    df_medical_mm = numeric_scaler(df_medical, numeric_all) # minmax scaling for all numeric columns, so all elements in [0,1]
-    df_medical_mm_oh = one_hot(df_medical_mm, cat_all)
-    df_medical_mm_oh.drop(cat_all, axis = 1, inplace=True) # drop the categorics that were used to one hot encode
-    df_medical_mm_oh = df_medical_mm_oh * 1.0 # make bool true, false into 1.0, 0.0
+    # df_medical = pd.read_csv('../../datasets/processed/insurance.csv')
+    # numeric_all = ['age', 'bmi', 'children', 'charges']
+    # cat_all = ['sex', 'smoker', 'region']
+    # df_medical_mm = numeric_scaler(df_medical, numeric_all) # minmax scaling for all numeric columns, so all elements in [0,1]
+    # df_medical_mm_oh = one_hot(df_medical_mm, cat_all)
+    # df_medical_mm_oh.drop(cat_all, axis = 1, inplace=True) # drop the categorics that were used to one hot encode
+    # df_medical_mm_oh = df_medical_mm_oh * 1.0 # make bool true, false into 1.0, 0.0
 
-    X = df_medical_mm_oh.drop('charges', axis=1)
-    X['intercept'] = 1.0
-    X = X.to_numpy() # now (n, d+1) dimensional, linear regression in d+1 is affine in d
-    y = df_medical_mm_oh['charges'].to_numpy()
-    ## 
+    # X = df_medical_mm_oh.drop('charges', axis=1)
+    # X['intercept'] = 1.0
+    # X = X.to_numpy() # now (n, d+1) dimensional, linear regression in d+1 is affine in d
+    # y = df_medical_mm_oh['charges'].to_numpy()
+    X = np.load(f'./datasets/processed/{dataset}/X.npy') # make sure your conda PYTHONPATH points to the base of this repo!
+    y = np.load(f'./datasets/processed/{dataset}/y.npy')
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = ttsplit, random_state = seed)
 
