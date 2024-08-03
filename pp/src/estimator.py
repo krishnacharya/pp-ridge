@@ -1,8 +1,5 @@
 import numpy as np
-import sys
-sys.path.append('../')
-
-from src.utils import weighted_rls_solution, compute_eta, compute_private_estimator, evaluate_weighted_rls_objective, dataset_mask_jorgensen
+from pp.src.utils import weighted_rls_solution, compute_eta, compute_private_estimator, evaluate_weighted_rls_objective, dataset_mask_jorgensen
 
 ## NON-PRIVATE SOLUTION
 

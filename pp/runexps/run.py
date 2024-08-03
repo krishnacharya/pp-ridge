@@ -1,14 +1,14 @@
-
-from src.preprocessing import *
-from src.utils import *
-from src.estimator import pp_estimator, maxgroup_estimator, maxeps_estimator, jorgensen_private_estimator, nonpriv_solution
+from pp.src.preprocessing import *
+from pp.src.utils import *
+from pp.src.estimator import pp_estimator, maxgroup_estimator, maxeps_estimator, jorgensen_private_estimator, nonpriv_solution
+from pp.src.proj_dirs import processed_data_root
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
 
 def run_real_data(runs:int, ttsplit: float, lamb:float, frac_train: float, \
-                    f_c:float, f_m:float, eps_c:float, eps_m:float, eps_l:float, seed:int, dataset:str = "insurance.csv"):
+                    f_c:float, f_m:float, eps_c:float, eps_m:float, eps_l:float, seed:int, dataset:str):
 
     np.random.seed(seed = seed) # set seed for data generation below, and for sklearn randomness in test train split
     
@@ -25,8 +25,10 @@ def run_real_data(runs:int, ttsplit: float, lamb:float, frac_train: float, \
     # X['intercept'] = 1.0
     # X = X.to_numpy() # now (n, d+1) dimensional, linear regression in d+1 is affine in d
     # y = df_medical_mm_oh['charges'].to_numpy()
-    X = np.load(f'./datasets/processed/{dataset}/X.npy') # make sure your conda PYTHONPATH points to the base of this repo!
-    y = np.load(f'./datasets/processed/{dataset}/y.npy')
+    X_load_path = processed_data_root() / dataset / "X.npy"
+    y_load_path = processed_data_root() / dataset / "y.npy"
+    X = np.load(str(X_load_path))
+    y = np.load(str(y_load_path))
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = ttsplit, random_state = seed)
 
