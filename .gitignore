@@ -1,2 +1,4 @@
 *.pyc
 *.DS_Store
+*.pkl
+*.ipynb_checkpoints
